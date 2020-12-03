@@ -11,7 +11,7 @@ class Node {
 		this.activation = 0;
 		this.activeFlag = false;
 		this.activationFunc = NEAT.activationFunc;
-
+ 
 		this.inConnections = [];
 		this.outConnections = [];
 
