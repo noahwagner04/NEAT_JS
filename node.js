@@ -20,14 +20,7 @@ class Node {
 	}
 
 	sensorLoad(value) {
-		if (this.type === nodeTypes.SENSOR) {
-			this.lastActivation2 = this.lastActivation;
-			this.lastActivation = this.activation;
 
-			this.activation = value;
-			this.activeFlag = true;
-		}
-		return this;
 	}
 
 	addIncoming(node, weight, recur) {
