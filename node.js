@@ -38,4 +38,8 @@ class Node {
 	activateOveride() {
 
 	}
+
+	feedForward(value) {
+
+	}
 }
