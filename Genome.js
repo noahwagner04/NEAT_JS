@@ -8,7 +8,7 @@ class Genome {
 	}
 
 	clone() {
-		
+
 	}
 
 	init() {
@@ -28,6 +28,14 @@ class Genome {
 	}
 
 	mutateWeights() {
+
+	}
+
+	perturbWeights(percent) {
+
+	}
+
+	randomizeWeights(percent){
 
 	}
 
