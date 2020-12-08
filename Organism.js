@@ -1,7 +1,7 @@
 class Organism {
 	constructor(genome, gen, fitness) {
-		this.genome = 
-		this.network = 
+		this.genome = genome;
+		this.network = genome.constructNetwork;
 
 		this.fitness = fitness;
 		this.originalFitness = fitness;
