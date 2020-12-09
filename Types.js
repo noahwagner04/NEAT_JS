@@ -22,9 +22,9 @@ let nodePlaces =  {
 	OUTPUT: 3
 };
 
-// these are the config types for any object in the lib
-// every object will take a config object with a type
-// attribute, it will make it easier for different 
+// these are the config types for any object in the lib.
+// every object will take a config object in its constructor
+// with a type attribute, it will make it easier for different 
 // constructor types for objects
 let configTypes = {
 	CONFIG_ONE: 0,
