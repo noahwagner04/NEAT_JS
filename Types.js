@@ -21,3 +21,13 @@ let nodePlaces =  {
 	HIDDEN: 2,
 	OUTPUT: 3
 };
+
+// these are the config types for any object in the lib
+// every object will take a config object with a type
+// attribute, it will make it easier for different 
+// constructor types for objects
+let configTypes = {
+	CONFIG_ONE: 0,
+	CONFIG_TWO: 1,
+	COPY:2
+}
