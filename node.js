@@ -1,3 +1,7 @@
+// a node in a network, calculates summed 
+// inputs by incomming connections
+// and sends them out to other nodes with 
+// other connections
 class Node {
 	constructor(ntype, placement, id) {
 		// this nodes id, helps with genetic encoding
