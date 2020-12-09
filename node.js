@@ -29,7 +29,7 @@ class Node {
 		this.activeFlag = false;
 		// the function active sum goes through to become
 		// the output of the neuron
-		this.activationFunc = Activation.sigmoid(-4.9);
+		this.activationFunc = Activation.sigmoid(4.924273);
 
 		// array of all the incomming connections to the neuron
 		this.inConnections = [];
