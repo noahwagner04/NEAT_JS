@@ -66,7 +66,7 @@ class Node {
 	used on input neurons
 	simulates one time step of activation,
 	activating the neurons takes place in the 
-	network, as this func only adds to the active sum
+	network, as this func only adds to the activesum
 	*/
 	feedForward(value) {
 
