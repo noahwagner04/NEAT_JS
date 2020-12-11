@@ -36,4 +36,14 @@ let configTypes = {
 	CONFIG_ONE: 0,
 	CONFIG_TWO: 1,
 	COPY:2
-}
+};
+
+/*
+possible innovation types in a genome,
+this helps with checking if a mutation
+already has occurred in the population
+*/
+let innovTypes = {
+	NEWCONNECTION: 0,
+	NEWNODE: 1
+};
