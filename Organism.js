@@ -5,7 +5,7 @@ with a fitness score
 class Organism {
 	constructor(config) {
 		this.genome = config.genome; 		   // the genotype
-		this.network = config.genome.constructNetwork(); // the phenotype
+		this.network = config.genome.constructNetwork().phenotype; // the phenotype
 
 		this.fitness = config.fitness; 		   // the adjusted fitness of this organism
 		this.originalFitness = config.fitness; // the original unadjusted fitness of this organism
