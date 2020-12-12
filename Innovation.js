@@ -5,8 +5,8 @@ inovation num
 */
 class Innovation {
 	constructor(config) {
-		this.inNode = config.inNode;
-		this.outNode = config.outNode;
+		this.inNodeId = config.inNodeId;
+		this.outNodeId = config.outNodeId;
 
 		this.innovation = config.innov1;
 		this.innovation2 = config.innov2;
