@@ -5,12 +5,15 @@ the network, mutations, and
 crossover
 */
 class Genome {
-	constructor(inNum, outNum, maxHidden, recur) {
-		this.nodeG = []; 			// a list of all node genes in this genome
-		this.connectionG = []; 		// a list of all connection genes in this genome
+	constructor(config) {
+		this.nodeG = [];		// a list of all node genes in this genome
+		this.connectionG = [];  // a list of all connection genes in this genome
 
-		this.recur = recur; 		// whether or not to allow for reccurent connections
-		this.maxHidden = maxHidden; // the max hidden nodes that this genome can evolve
+		this.inNum = config.inNum;	 // the number of in node genes this genome will have
+		this.outNum = config.outNum; // the number of out node genes this genome will have
+
+		this.recur = config.recur; 		   // whether or not to allow for reccurent connections
+		this.maxHidden = config.maxHidden; // the max hidden nodes that this genome can evolve
 	}
 
 	// return a clone of this genome

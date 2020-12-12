@@ -1,10 +1,24 @@
 // the gene representaion of a connection
 class ConnectionGene {
-	constructor(nodeId1, nodeId2, weight, enabled, innov) {
-		this.nodeId1 = nodeId1; // id of node inputing to this gene
-		this.nodeId2 = nodeId2; // id of node this gene is inputing to
-		this.weight = weight;
-		this.enabled = enabled;
-		this.innov = innov; 	// the innovation num of this gene
+	constructor(config) {
+		this.createConnection(config);  // creates the connection
+		this.enabled = config.enabled;
+		this.innov = config.innov;		// the innovation num of this gene
+	}
+
+	/* 
+	creates a connection, it is
+	helpful to have a reference to the 
+	connection of this gene for mutation
+	and genetic encoding purposes
+	*/
+	createConnection(config) {
+		let connectionConfig = {
+			inNode: config.inNode,
+			outNode: config.outNode,
+			weight: config.weight,
+			isRecur: config.isRecur
+		};
+		this.connection = new Connection(connectionConfig);
 	}
 }

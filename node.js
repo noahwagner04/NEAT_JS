@@ -5,10 +5,10 @@ and sends them out to other nodes with
 other connections
 */
 class Node {
-	constructor(ntype, placement, id) {
-		this.id = id;
-		this.type = ntype;			// type of this node, either NEURON of SENSOR
-		this.placement = placement; // placement of node, either BIAS, INPUT, HIDDEN, or OUPUT
+	constructor(config) {
+		this.id = config.id;
+		this.type = config.ntype;			// type of this node, either NEURON of SENSOR
+		this.placement = config.placement;  // placement of node, either BIAS, INPUT, HIDDEN, or OUPUT
 
 		// this.activationCount = 0;
 		this.lastActivation = 0; 	// previous time steps activation for recurrency
