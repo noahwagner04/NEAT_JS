@@ -17,6 +17,7 @@ class Node {
 		this.activesum = 0;		 	// the sum of all the incoming connections
 		this.activation = 0;	 	// activesum after its ran through the activationFunc
 		this.activeFlag = false; 	// whether or not this node is currently activated
+		this.randomActivation = config.randomActivation;	// whether or not this node can choose its own activation function
 		this.activationFunc = Activation.sigmoid(4.924273); // function activesum goes through to become activated
 
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
