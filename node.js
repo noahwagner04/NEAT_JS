@@ -29,13 +29,14 @@ class Node {
 
 	// loads a value to an input neuron
 	sensorLoad(value) {
-		if(this.type === nodeTypes.SENSOR) {
+		if (this.type === nodeTypes.SENSOR) {
 			this.lastActivation = this.activation;
 			this.activation = value;
 			this.activeFlag = true;
 			this.activationCount++;
+			return this;
 		}
-		return this;
+		console.log("cannot load value into node of type: NEURON");
 	}
 
 	/*
@@ -43,7 +44,19 @@ class Node {
 	adds an outgoing connection to the node its coming from
 	*/
 	addIncoming(node, weight, recur) {
-
+		if (this.type !== nodeTypes.SENSOR) {
+			let config = {
+				inNode: node,
+				outNode: this,
+				weight: weight,
+				isRecur: recur
+			};
+			let connection = new Connection(config);
+			this.inConnections.push(connection);
+			node.outConnections.push(connection);
+			return this;
+		}
+		console.log("cannot add incoming into node of type: SENSOR");
 	}
 
 	/*
