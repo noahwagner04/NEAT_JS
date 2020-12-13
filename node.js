@@ -23,17 +23,41 @@ class Node {
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
 
-		this.override = false;
+		this.overriden = false;
+		this.overrideValue = 0;
+	}
+
+	/*
+	sets all activation related attributes to
+	indicate that this node has been activated,
+	assuming the value has already been passed
+	through an activation function
+	*/
+	activate(value) {
+		this.lastActivation = this.activation;
+		this.activation = value;
+		this.activeFlag = true;
+		this.activationCount++;
+	}
+
+	/*
+	resets all node values that have to do with
+	activation
+	*/
+	reset() {
+		this.activationCount = 0;
+		this.lastActivation = 0;
+		this.activation = 0;
+		this.activesum = 0;
+		this.activeFlag = false;
+		this.overriden = false;
 		this.overrideValue = 0;
 	}
 
 	// loads a value to an input neuron
 	sensorLoad(value) {
 		if (this.type === nodeTypes.SENSOR) {
-			this.lastActivation = this.activation;
-			this.activation = value;
-			this.activeFlag = true;
-			this.activationCount++;
+			this.activate(value);
 			return this;
 		}
 		console.log("cannot load value into node of type: NEURON");
@@ -65,19 +89,27 @@ class Node {
 	supposed to be used on output neurons so
 	it can go through the entire network
 	*/
-
 	flushBack() {
-
+		if(this.type === nodeTypes.SENSOR) {
+			this.reset();
+			return;
+		} else {
+			this.reset();
+			this.inConnections.map(connection => connection.inNode.flushBack());
+		}
 	}
 
 	// overides this node with a desired value
 	overrideOutput(value) {
-
+		this.overrideValue = value;
+		this.overridden = true;
+		return this;
 	}
 
 	// activates this neuron with the overridden value
-	activateOveride() {
-
+	activateOverride() {
+		this.activate(this.overrideValue);
+		return this;
 	}
 
 	/*
@@ -88,7 +120,19 @@ class Node {
 	activating the neurons takes place in the 
 	network, as this func only adds to the activesum
 	*/
-	feedForward(value) {
-
+	feedForward() {
+		if (this.activationCount === 0 || this.outConnections.length === 0) return;
+		this.outConnections.map(connection => {
+			if (connection.isRecur === false) {
+				let addAmount = this.activation * connection.weight;
+				connection.outNode.activesum += addAmount;
+				connection.outNode.activesum.activeFlag = true;
+				connection.outNode.feedForward();
+			} else {
+				let addAmount = this.activation * connection.weight;
+				connection.outNode.activesum += addAmount;
+				connection.outNode.activesum.activeFlag = true;
+			}
+		});
 	}
 }
