@@ -126,7 +126,7 @@ class Node {
 			if (connection.isRecur === false) {
 				let addAmount = this.activation * connection.weight;
 				connection.outNode.activesum += addAmount;
-				connection.outNode.activesum.activeFlag = true;
+				connection.outNode.activeFlag = true;
 				connection.outNode.feedForward();
 			} else {
 				let addAmount = this.activation * connection.weight;
