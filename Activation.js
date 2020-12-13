@@ -24,7 +24,7 @@ class Activation {
 	}
 
 	static TanH(x) {
-		return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x))
+		return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 	}
 
 	static ReLU(x) {
