@@ -7,10 +7,10 @@ other connections
 class Node {
 	constructor(config) {
 		this.id = config.id;
-		this.type = config.ntype;			// type of this node, either NEURON of SENSOR
+		this.type = config.type;			// type of this node, either NEURON of SENSOR
 		this.placement = config.placement;  // placement of node, either BIAS, INPUT, HIDDEN, or OUPUT
 
-		// this.activationCount = 0;
+		this.activationCount = 0;
 		this.lastActivation = 0; 	// previous time steps activation for recurrency
 		//this.lastActivation2 = 0; // two time steps ago activation for special recurrency cases
 
@@ -29,7 +29,13 @@ class Node {
 
 	// loads a value to an input neuron
 	sensorLoad(value) {
-
+		if(this.type === nodeTypes.SENSOR) {
+			this.lastActivation = this.activation;
+			this.activation = value;
+			this.activeFlag = true;
+			this.activationCount++;
+		}
+		return this;
 	}
 
 	/*
