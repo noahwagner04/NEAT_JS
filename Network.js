@@ -37,12 +37,12 @@ class Network {
 	}
 
 	//adds input neuron to the input list
-	addInput() {
+	addInput(node) {
 
 	}
 
 	// adds output neuron to the output list
-	addOutput() {
+	addOutput(node) {
 
 	}
 
@@ -53,7 +53,7 @@ class Network {
 	has to be the same length as the input
 	array
 	*/
-	loadSensors() {
+	loadSensors(inputs) {
 
 	}
 
@@ -62,7 +62,7 @@ class Network {
 	array of inputs values to be overriden with
 	must be the same length as output array
 	*/
-	overrideOutputs() {
+	overrideOutputs(outputs) {
 
 	}
 
@@ -86,7 +86,7 @@ class Network {
 	recursivly checks if a potential connection is
 	recurrent or not.
 	*/
-	checkRecur() {
+	checkRecur(inNode, outNode, count, thresh) {
 
 	}
 
