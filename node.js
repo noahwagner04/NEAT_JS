@@ -24,7 +24,7 @@ class Node {
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
 
-		this.overriden = false;
+		this.overridden = false;
 		this.overrideValue = 0;
 	}
 
