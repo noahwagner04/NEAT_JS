@@ -17,6 +17,7 @@ class Node {
 		this.activesum = 0;		 	// the sum of all the incoming connections
 		this.activation = 0;	 	// activesum after its ran through the activationFunc
 		this.activeFlag = false; 	// whether or not this node is currently activated
+		this.visited = false;		// true when a node was fed forward durring activation
 		this.randomActivation = config.randomActivation;	// whether or not this node can choose its own activation function
 		this.activationFunc = Activation.sigmoid(4.924273); // function activesum goes through to become activated
 
@@ -138,15 +139,17 @@ class Node {
 	*/
 	feedForward() {
 		this.outConnections.forEach(connection => {
+			let node = connection.outNode;
 			if (connection.isRecur === false) {
 				let addAmount = this.activation * connection.weight;
-				connection.outNode.addActiveSum(addAmount);
-				if (connection.outNode.activeFlag === false) {
-					connection.outNode.feedForward();
+				node.addActiveSum(addAmount);
+				if (node.visited === false) {
+					node.feedForward();
+					node.visited = true;
 				}
 			} else {
 				let addAmount = this.lastActivation * connection.weight;
-				connection.outNode.addActiveSum(addAmount);
+				node.addActiveSum(addAmount);
 			}
 		});
 	}
