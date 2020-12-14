@@ -157,7 +157,7 @@ class Node {
 	feedforward look cleaner
 	*/
 	addActiveSum(amount) {
-		this.activesum += addAmount;
+		this.activesum += amount;
 		this.activesum.activeFlag = true;
 		return this;
 	}
