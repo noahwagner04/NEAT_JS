@@ -95,7 +95,7 @@ class Node {
 			return;
 		} else {
 			this.reset();
-			this.inConnections.map(connection => connection.inNode.flushBack());
+			this.inConnections.forEach(connection => connection.inNode.flushBack());
 		}
 	}
 
@@ -122,7 +122,7 @@ class Node {
 	*/
 	feedForward() {
 		if (this.activationCount === 0 || this.outConnections.length === 0) return;
-		this.outConnections.map(connection => {
+		this.outConnections.forEach(connection => {
 			if (connection.isRecur === false) {
 				let addAmount = this.activation * connection.weight;
 				connection.outNode.activesum += addAmount;
