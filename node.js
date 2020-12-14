@@ -141,7 +141,7 @@ class Node {
 			if (connection.isRecur === false) {
 				let addAmount = this.activation * connection.weight;
 				connection.outNode.addActiveSum(addAmount);
-				if (this.activeFlag === false) {
+				if (connection.outNode.activeFlag === false) {
 					connection.outNode.feedForward();
 				}
 			} else {
@@ -158,7 +158,7 @@ class Node {
 	*/
 	addActiveSum(amount) {
 		this.activesum += amount;
-		this.activesum.activeFlag = true;
+		this.activeFlag = true;
 		return this;
 	}
 }
