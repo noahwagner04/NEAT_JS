@@ -137,18 +137,28 @@ class Node {
 	network, as this func only adds to the activesum
 	*/
 	feedForward() {
-		if (this.activationCount === 0 || this.outConnections.length === 0) return;
 		this.outConnections.forEach(connection => {
 			if (connection.isRecur === false) {
 				let addAmount = this.activation * connection.weight;
-				connection.outNode.activesum += addAmount;
-				connection.outNode.activeFlag = true;
-				connection.outNode.feedForward();
+				connection.outNode.addActiveSum(addAmount);
+				if (this.activeFlag === false) {
+					connection.outNode.feedForward();
+				}
 			} else {
-				let addAmount = this.activation * connection.weight;
-				connection.outNode.activesum += addAmount;
-				connection.outNode.activesum.activeFlag = true;
+				let addAmount = this.lastActivation * connection.weight;
+				connection.outNode.addActiveSum(addAmount);
 			}
 		});
+	}
+
+	/*
+	adds to the activesum of a node,
+	also sets activeFlag to true, makes
+	feedforward look cleaner
+	*/
+	addActiveSum(amount) {
+		this.activesum += addAmount;
+		this.activesum.activeFlag = true;
+		return this;
 	}
 }
