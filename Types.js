@@ -47,3 +47,16 @@ let innovTypes = {
 	NEWCONNECTION: 0,
 	NEWNODE: 1
 };
+
+/*
+all the activations the node can choose from,
+user can put more here if desired, s
+*/
+let activationTypes = [
+	Activation.sigmoid,
+	Activation.linearActivation,
+	Activation.binaryStep,
+	Activation.TanH,
+	Activation.RelU,
+	Activation.leakyRelU 
+];
