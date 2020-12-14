@@ -28,6 +28,22 @@ class Node {
 	}
 
 	/*
+	chooses from the activationTypes array,
+	which has the six default activation functions
+	in it, the user can add their own functions to the
+	object, and this function will have no problem with 
+	ranomly picking it
+	*/
+	chooseActivationFunc() {
+		if (this.randomActivation === true) {
+			let rdmIndex = Math.floor(Math.random() * activationTypes.length);
+			this.activationFunc = activationTypes[rdmIndex];
+			return this;
+		}
+		console.log("cannot randomize activation on this node, try setting randomActivation = true");
+	}
+
+	/*
 	sets all activation related attributes to
 	indicate that this node has been activated,
 	assuming the value has already been passed
