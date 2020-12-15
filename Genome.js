@@ -15,6 +15,8 @@ class Genome {
 		this.recur = config.recur; 		   // whether or not to allow for reccurent connections
 		this.maxHidden = config.maxHidden; // the max hidden nodes that this genome can evolve
 
+		this.nodeActivation = config.nodeActivation; // this atribute decides how nodes should be activated
+
 		this.phenotype = undefined;
 	}
 
