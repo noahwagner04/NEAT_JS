@@ -58,5 +58,5 @@ let activationTypes = [
 	Activation.binaryStep,
 	Activation.TanH,
 	Activation.ReLU,
-	Activation.leakyRelU 
+	Activation.leakyReLU 
 ];
