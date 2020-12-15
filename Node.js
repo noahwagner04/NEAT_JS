@@ -18,8 +18,8 @@ class Node {
 		this.activation = 0;	 	// activesum after its ran through the activationFunc
 		this.activeFlag = false; 	// whether or not this node is currently activated
 		this.visited = false;		// true when a node was fed forward durring activation
-		this.randomActivation = config.randomActivation;	// whether or not this node can choose its own activation function
-		this.activationFunc = Activation.sigmoid(4.924273); // function activesum goes through to become activated
+		this.randomActivation = config.randomActivation; // whether or not this node can choose its own activation function
+		this.initActivation(config.activation) 			 // chooses the activation function of the node
 
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
@@ -28,11 +28,20 @@ class Node {
 		this.overrideValue = 0;
 	}
 
+	//chooses activation function based off config obj
+	initActivation(func) {
+		if(this.randomActivation) {
+			this.chooseActivationFunc();
+		} else {
+			this.activationFunc = func;
+			return this;
+		}
+	}
 	/*
 	chooses from the activationTypes array,
 	which has the six default activation functions
 	in it, the user can add their own functions to the
-	object, and this function will have no problem with 
+	object and this function will have no problem with 
 	ranomly picking it
 	*/
 	chooseActivationFunc() {
@@ -46,13 +55,11 @@ class Node {
 
 	/*
 	sets all activation related attributes to
-	indicate that this node has been activated,
-	assuming the value has already been passed
-	through an activation function
+	indicate that this node has been activated
 	*/
-	activate(value) {
+	activate() {
 		this.lastActivation = this.activation;
-		this.activation = value;
+		this.activation = this.activationFunc(this.activesum);
 		this.activationCount++;
 		return this;
 	}
@@ -75,7 +82,8 @@ class Node {
 	// loads a value to an input neuron
 	sensorLoad(value) {
 		if (this.type === nodeTypes.SENSOR) {
-			this.activate(value);
+			this.activesum = value;
+			this.activate();
 			return this;
 		}
 		console.log("cannot load value into node of type: NEURON");
@@ -126,7 +134,9 @@ class Node {
 
 	// activates this neuron with the overridden value
 	activateOverride() {
-		this.activate(this.overrideValue);
+		this.lastActivation = this.activation;
+		this.activation = this.overrideValue;
+		this.activationCount++;
 		return this;
 	}
 
