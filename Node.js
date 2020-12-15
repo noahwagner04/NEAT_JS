@@ -29,7 +29,7 @@ class Node {
 	}
 
 	/*
-	chooses from the activationTypes array,
+	chooses from the activationFuncs array,
 	which has the six default activation functions
 	in it, the user can add their own functions to the
 	object, and this function will have no problem with 
@@ -37,8 +37,8 @@ class Node {
 	*/
 	chooseActivationFunc() {
 		if (this.randomActivation === true) {
-			let rdmIndex = Math.floor(Math.random() * activationTypes.length);
-			this.activationFunc = activationTypes[rdmIndex];
+			let rdmIndex = Math.floor(Math.random() * activationFuncs.length);
+			this.activationFunc = activationFuncs[rdmIndex];
 			return this;
 		}
 		console.log("cannot randomize activation on this node, try setting randomActivation = true");
