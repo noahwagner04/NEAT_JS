@@ -107,10 +107,10 @@ class Node {
 	it can go through the entire network
 	*/
 	flushBack() {
-		if(this.type === nodeTypes.SENSOR) {
-			this.reset();
+		if (this.type === nodeTypes.SENSOR) {
+			if (this.activationCount > 0) this.reset();
 			return;
-		} else {
+		} else if (this.activationCount > 0) {
 			this.reset();
 			this.inConnections.forEach(connection => connection.inNode.flushBack());
 		}
