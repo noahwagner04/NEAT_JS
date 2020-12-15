@@ -53,8 +53,8 @@ class Node {
 	activate(value) {
 		this.lastActivation = this.activation;
 		this.activation = value;
-		this.activeFlag = true;
 		this.activationCount++;
+		return this;
 	}
 
 	/*
@@ -69,6 +69,7 @@ class Node {
 		this.activeFlag = false;
 		this.overriden = false;
 		this.overrideValue = 0;
+		return this;
 	}
 
 	// loads a value to an input neuron
