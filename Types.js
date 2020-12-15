@@ -50,9 +50,9 @@ let innovTypes = {
 
 /*
 all the activations the node can choose from,
-user can put more here if desired, s
+user can put more here if desired
 */
-let activationTypes = [
+let activationFuncs = [
 	Activation.sigmoid,
 	Activation.linearActivation,
 	Activation.binaryStep,
