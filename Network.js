@@ -22,7 +22,8 @@ class Network {
 	network starting at the output nodes
 	*/
 	flush() {
-
+		this.outputs.forEach(node => node.flushBack());
+		return this;
 	}
 
 	/*
