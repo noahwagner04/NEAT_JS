@@ -155,16 +155,16 @@ class Node {
 	feedForward() {
 		this.outConnections.forEach(connection => {
 			let node = connection.outNode;
+			let addAmount = 0;
 			if (connection.isRecur === false) {
-				let addAmount = this.activation * connection.weight;
-				node.addActiveSum(addAmount);
-				if (node.visited === false) {
-					node.feedForward();
-					node.visited = true;
-				}
+				addAmount = this.activation * connection.weight;
 			} else {
-				let addAmount = this.lastActivation * connection.weight;
-				node.addActiveSum(addAmount);
+				addAmount = this.lastActivation * connection.weight;
+			}
+			node.addActiveSum(addAmount);
+			if (node.visited === false) {
+				node.visited = true;
+				node.feedForward();
 			}
 		});
 	}
