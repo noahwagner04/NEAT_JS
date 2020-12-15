@@ -34,7 +34,16 @@ class Network {
 	to go through the entire network cleanly
 	*/
 	activate() {
-
+		this.inputs.forEach(node => node.feedForward());
+		this.all.forEach(node => {
+			if(node.type !== nodeTypes.SENSOR && node.activeFlag === true) {
+				node.activate();
+			}
+			node.activesum = 0;
+			node.activeFlag = false;
+			node.visited = false;
+		});
+		return this;
 	}
 
 	//adds input neuron to the input list

@@ -58,10 +58,14 @@ class Node {
 	indicate that this node has been activated
 	*/
 	activate() {
-		this.lastActivation = this.activation;
-		this.activation = this.activationFunc(this.activesum);
-		this.activationCount++;
-		return this;
+		if(this.overriden) {
+			this.activateOverride();
+		} else {
+			this.lastActivation = this.activation;
+			this.activation = this.activationFunc(this.activesum);
+			this.activationCount++;
+			return this;
+		}
 	}
 
 	/*

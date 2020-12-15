@@ -11,8 +11,11 @@ it could also allow for more unique behavior
 */
 
 class Activation {
-	static sigmoid(x, slope) {
-		return 1 / (1 + Math.exp(-(slope * x)));
+	static slope = 4.924273;
+	static leakiness = 0.01;
+	
+	static sigmoid(x) {
+		return 1 / (1 + Math.exp(-(Activation.slope * x)));
 	}
 
 	static linearActivation(x) {
@@ -31,7 +34,7 @@ class Activation {
 		return x < 0 ? 0 : x;
 	}
 
-	static leakyRelU(x, leakiness) {
-		return x < 0 ? x * leakiness : x;
+	static leakyRelU(x) {
+		return x < 0 ? x * Activation.leakiness : x;
 	}
 }
