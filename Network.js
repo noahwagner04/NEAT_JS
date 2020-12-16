@@ -46,14 +46,21 @@ class Network {
 		return this;
 	}
 
-	//adds input neuron to the input list
+	/*
+	adds input neuron to the input list,
+	assuming the node is an input neuron
+	*/
 	addInput(node) {
-
+		this.inputs.push(node);
+		return this;
 	}
-
-	// adds output neuron to the output list
+	/*
+	adds output neuron to the output list
+	assuming the node is an input neuron
+	*/
 	addOutput(node) {
-
+		this.outputs.push(node);
+		return this;
 	}
 
 	/*
@@ -64,7 +71,7 @@ class Network {
 	array
 	*/
 	loadSensors(inputs) {
-
+		
 	}
 
 	/*
