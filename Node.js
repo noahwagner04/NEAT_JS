@@ -58,7 +58,7 @@ class Node {
 	indicate that this node has been activated
 	*/
 	activate() {
-		if(this.overriden) {
+		if (this.overriden) {
 			this.activateOverride();
 		} else {
 			this.lastActivation = this.activation;
@@ -86,8 +86,9 @@ class Node {
 	// loads a value to an input neuron
 	sensorLoad(value) {
 		if (this.type === nodeTypes.SENSOR) {
-			this.activesum = value;
-			this.activate();
+			this.lastActivation = this.activation;
+			this.activation = value;
+			this.activationCount++;
 			return this;
 		}
 		console.log("cannot load value into node of type: NEURON");
