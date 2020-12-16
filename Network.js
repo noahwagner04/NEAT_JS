@@ -13,6 +13,22 @@ class Network {
 
 		this.connectionNum = undefined; // number of all connections
 		this.nodeNum = undefined; 		// number of all nodes
+
+		this.initBias(); // initialize the bias
+	}
+
+	/*
+	initializes the bias node to be activated,
+	makes it so the user doesn't have to manualy
+	activate it
+	*/
+	initBias() {
+		this.inputs.forEach(node => {
+			if(node.placement === nodePlaces.BIAS) {
+				node.sensorLoad(1);
+			}
+		});
+		return this;
 	}
 
 	/*
@@ -71,7 +87,7 @@ class Network {
 	array
 	*/
 	loadSensors(inputs) {
-		
+
 	}
 
 	/*
