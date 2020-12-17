@@ -86,8 +86,18 @@ class Network {
 	has to be the same length as the input
 	array
 	*/
-	loadSensors(inputs) {
-
+	loadSensors(inputArray) {
+		if (inputArray.length !== this.inputs.length - 1) {
+			console.log("WARNING: netowrk receiving an invalid number inputs");
+		} else {
+			let index = 0;
+			this.inputs.forEach(node => {
+				if (node.placement === nodePlaces.BIAS) return;
+				node.sensorLoad(inputArray[index]);
+				index++;
+			});
+			return this;
+		}
 	}
 
 	/*
