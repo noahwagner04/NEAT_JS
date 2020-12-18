@@ -58,7 +58,7 @@ class Node {
 	indicate that this node has been activated
 	*/
 	activate() {
-		if (this.overriden) {
+		if (this.overridden) {
 			this.activateOverride();
 		} else {
 			this.lastActivation = this.activation;
@@ -78,7 +78,7 @@ class Node {
 		this.activation = 0;
 		this.activesum = 0;
 		this.activeFlag = false;
-		this.overriden = false;
+		this.overridden = false;
 		this.overrideValue = 0;
 		return this;
 	}
