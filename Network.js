@@ -105,8 +105,15 @@ class Network {
 	array of inputs values to be overriden with
 	must be the same length as output array
 	*/
-	overrideOutputs(outputs) {
-
+	overrideOutputs(outputArray) {
+		if (outputArray.length !== this.outputs.length) {
+			console.log("WARNING: netowrk receiving an invalid number override outputs");
+		} else {
+			for (let i = 0; i < this.outputs.length; i++) {
+				this.outputs[i].overrideOutput(outputArray[i]);
+			}
+			return this;
+		}
 	}
 
 	/*
