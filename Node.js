@@ -180,4 +180,12 @@ class Node {
 		this.activeFlag = true;
 		return this;
 	}
+
+	/*
+	finds the depth of this node recursivly
+	starting at a provided depth
+	*/
+	findDepth(depth) {
+
+	}
 }

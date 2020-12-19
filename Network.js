@@ -133,6 +133,15 @@ class Network {
 	}
 
 	/*
+	checks to see the maximum number of nodes
+	a input has to go through to get to an output
+	node, used for clasification problems
+	*/
+	getMaxDepth() {
+
+	}
+
+	/*
 	recursivly checks if a potential connection is
 	recurrent or not.
 	*/
