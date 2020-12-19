@@ -136,15 +136,18 @@ class Network {
 	recursivly checks if a potential connection is
 	recurrent or not.
 	*/
-	checkRecur(inNode, outNode, count, thresh) {
-
-	}
-
-	/*
-	true when even one output is off,
-	returns false when all outputs are activated
-	*/
-	checkOutputsOff() {
-
+	static checkRecur(inNode, outNode, count, thresh) {
+		count++;
+		if (count >= thresh) {
+			return false;
+		}
+		if (inNode === outNode) return true;
+		for (let i = 0; i < inNode.inConnections.length; i++) {
+			let connection = inNode.inConnections[i];
+			if (connection.isRecur === false) {
+				if (Network.checkRecur(connection.inNode, outNode, count, thresh)) return true;
+			}
+		}
+		return false;
 	}
 }
