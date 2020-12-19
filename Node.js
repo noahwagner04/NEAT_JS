@@ -186,6 +186,17 @@ class Node {
 	starting at a provided depth
 	*/
 	findDepth(depth) {
-
+		let curDepth;
+		let max = depth;
+		if (this.type === nodeTypes.SENSOR) return depth;
+		this.inConnections.forEach(connection => {
+			if (connection.isRecur === true) {
+				console.log("depth cannot be calculated on network with loop");
+				return;
+			}
+			curDepth = connection.inNode.findDepth(depth + 1);
+			if (curDepth > max) max = curDepth;
+		});
+		return max;
 	}
 }
