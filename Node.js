@@ -19,7 +19,7 @@ class Node {
 		this.activeFlag = false; 	// whether or not this node is currently activated
 		this.visited = false;		// true when a node was fed forward durring activation
 		this.randomActivation = config.randomActivation; // whether or not this node can choose its own activation function
-		this.initActivation(config.activation) 			 // chooses the activation function of the node
+		this.initActivation(config.activation); 		 // chooses the activation function of the node
 
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
