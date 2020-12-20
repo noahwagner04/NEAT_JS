@@ -14,6 +14,8 @@ class Network {
 		this.connectionNum = undefined; // number of all connections
 		this.nodeNum = undefined; 		// number of all nodes
 
+		this.depth = -1; 				// number of nodes inputs have to travel through to get to the output nodes
+
 		this.initBias(); // initialize the bias
 	}
 
@@ -137,8 +139,13 @@ class Network {
 	a input has to go through to get to an output
 	node, used for clasification problems
 	*/
-	getMaxDepth() {
-
+	calcMaxDepth() {
+		let curDepth;
+		this.outputs.forEach(node => {
+			curDepth = Node.findDepth(node, 0);
+			if(curDepth > this.depth) this.depth = curDepth;
+		});
+		return this;
 	}
 
 	/*

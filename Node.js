@@ -128,6 +128,7 @@ class Node {
 			this.reset();
 			this.inConnections.forEach(connection => connection.inNode.flushBack());
 		}
+		return this;
 	}
 
 	// overides this node with a desired value
@@ -168,6 +169,7 @@ class Node {
 				node.feedForward();
 			}
 		});
+		return this;
 	}
 
 	/*
@@ -185,16 +187,16 @@ class Node {
 	finds the depth of this node recursivly
 	starting at a provided depth
 	*/
-	findDepth(depth) {
+	static findDepth(node, depth) {
 		let curDepth;
 		let max = depth;
-		if (this.type === nodeTypes.SENSOR) return depth;
-		this.inConnections.forEach(connection => {
+		if (node.type === nodeTypes.SENSOR) return depth;
+		node.inConnections.forEach(connection => {
 			if (connection.isRecur === true) {
 				console.log("depth cannot be calculated on network with loop");
 				return;
 			}
-			curDepth = connection.inNode.findDepth(depth + 1);
+			curDepth = Node.findDepth(connection.inNode, depth + 1);
 			if (curDepth > max) max = curDepth;
 		});
 		return max;
