@@ -184,7 +184,7 @@ class Node {
 	}
 
 	/*
-	finds the depth of this node recursivly
+	finds the depth of a node recursivly
 	starting at a provided depth
 	*/
 	static findDepth(node, depth) {
