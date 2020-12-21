@@ -1,8 +1,7 @@
 /*
-the genotype in a organsim,
-is responsible for creating
-the network, mutations, and 
-crossover
+the genotype in a organsim,is 
+responsible for creating the 
+network, mutations, and crossover
 */
 class Genome {
 	constructor(config) {
