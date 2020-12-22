@@ -41,7 +41,7 @@ class Node {
 	chooses from the activationTypes array,
 	which has the six default activation functions
 	in it, the user can add their own functions to the
-	object and this function will have no problem with 
+	array and this function will have no problem with 
 	ranomly picking it
 	*/
 	chooseActivationFunc() {
