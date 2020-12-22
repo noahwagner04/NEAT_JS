@@ -14,43 +14,17 @@ class Node {
 		this.lastActivation = 0; 	// previous time steps activation for recurrency
 		//this.lastActivation2 = 0; // two time steps ago activation for special recurrency cases
 
-		this.activesum = 0;		 	// the sum of all the incoming connections
-		this.activation = 0;	 	// activesum after its ran through the activationFunc
-		this.activeFlag = false; 	// whether or not this node is currently activated
-		this.visited = false;		// true when a node was fed forward durring activation
-		this.randomActivation = config.randomActivation; // whether or not this node can choose its own activation function
-		this.initActivation(config.activation); 		 // chooses the activation function of the node
+		this.activesum = 0;		 			 	 // the sum of all the incoming connections
+		this.activation = 0;	 			 	 // activesum after its ran through the activationFunc
+		this.activeFlag = false; 			 	 // whether or not this node is currently activated
+		this.visited = false;					 // true when a node was fed forward durring activation
+		this.activationFunc = config.activation; // whether or not this node can choose its own activation function
 
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
 
 		this.overridden = false;
 		this.overrideValue = 0;
-	}
-
-	//chooses activation function based off config obj
-	initActivation(func) {
-		if(this.randomActivation) {
-			this.chooseActivationFunc();
-		} else {
-			this.activationFunc = func;
-			return this;
-		}
-	}
-	/*
-	chooses from the activationTypes array,
-	which has the six default activation functions
-	in it, the user can add their own functions to the
-	array and this function will have no problem with 
-	ranomly picking it
-	*/
-	chooseActivationFunc() {
-		if (this.randomActivation === true) {
-			let rdmIndex = Math.floor(Math.random() * activationTypes.length);
-			this.activationFunc = activationTypes[rdmIndex];
-			return this;
-		}
-		console.log("cannot randomize activation on this node, try setting randomActivation = true");
 	}
 
 	/*

@@ -91,4 +91,16 @@ class Genome {
 	static compatibility(genome1, genome2) {
 
 	}
+
+	/*
+	chooses from the activationTypes array,
+	which has the six default activation functions
+	in it, the user can add their own functions to the
+	array and this function will have no problem with 
+	ranomly picking it
+	*/
+	static chooseActivationFunc() {
+		let rdmIndex = Math.floor(Math.random() * activationTypes.length);
+		return activationTypes[rdmIndex];
+	}
 }
