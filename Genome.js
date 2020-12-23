@@ -100,19 +100,19 @@ class Genome {
 	*/
 	initConnections(inputs, outputs) {
 		let innov = 0;
-		for (let i = 0; i < inputs.length; i++) {
-			for (let j = 0; j < outputs.length; j++) {
+		inputs.forEach(input => {
+			outputs.forEach(output => {
 				this.connectionG.push(new ConnectionGene({
-					inNode: inputs[i],
-					outNode: outputs[j],
+					inNode: input,
+					outNode: output,
 					weight: Math.random() * 2 - 1,
 					isRecur: false,
 					enabled: true,
 					innov: innov
 				}));
 				innov++;
-			}
-		}
+			});
+		});
 	}
 
 	/*
