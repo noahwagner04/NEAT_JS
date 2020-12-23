@@ -18,6 +18,8 @@ class Genome {
 		this.randomNodeActivation = config.evolveActivation; // whether or not we should randomly choose an activation per node
 
 		this.phenotype = undefined;
+
+		this.init(); // initializes the genome
 	}
 
 	// return a clone of this genome
@@ -25,12 +27,92 @@ class Genome {
 
 	}
 
+	// returns an array of the input nodes in nodeG
+	getInputs() {
+		let result = [];
+		this.nodeG.forEach(nodeGene => {
+			if (nodeGene.ntype === nodeTypes.SENSOR) result.push(nodeGene);
+		});
+		return result;
+	}
+
+	// returns an array of the output nodes in nodeG
+	getOutputs() {
+		let result = [];
+		this.nodeG.forEach(nodeGene => {
+			if (nodeGene.placement === nodePlaces.OUTPUT) result.push(nodeGene);
+		});
+		return result;
+	}
+
 	/*
 	initialize function, creates the initial node genes
 	and connection genes
 	*/
 	init() {
+		this.initInputGenes(0);
+		this.initOutputGenes(this.nodeG.length);
+		this.initConnections(this.getInputs(), this.getOutputs());
+	}
 
+	/*
+	initializes the input node genes,
+	checks whether a node should be a bias 
+	or input, then adds it to the nodeG array, labels
+	node ids starting at a given id
+	*/
+	initInputGenes(id) {
+		for (let i = id; i < this.inNum + id; i++) {
+			let currentNodeG = undefined;
+			if (i > 0) currentNodeG = new NodeGene({
+				id: i,
+				ntype: nodeTypes.SENSOR,
+				placement: nodePlaces.INPUT
+			});
+			else currentNodeG = new NodeGene({
+				id: i,
+				ntype: nodeTypes.SENSOR,
+				placement: nodePlaces.BIAS
+			});
+			this.nodeG.push(currentNodeG);
+		}
+	}
+
+	/*
+	initializes the output node genes, labels the
+	id of the nodes starting at a given id
+	*/
+	initOutputGenes(id) {
+		for (let i = id; i < this.outNum + id; i++) {
+			let currentNodeG = new NodeGene({
+				id: i,
+				ntype: nodeTypes.NEURON,
+				placement: nodePlaces.OUTPUT
+			});
+			this.nodeG.push(currentNodeG);
+		}
+	}
+
+	/*
+	initializes connection genes of this genome, takes
+	two arrays, input and output to iterate over, weight is
+	between -1, 1
+	*/
+	initConnections(inputs, outputs) {
+		let innov = 0;
+		for (let i = 0; i < inputs.length; i++) {
+			for (let j = 0; j < outputs.length; j++) {
+				this.connectionG.push(new ConnectionGene({
+					inNode: inputs[i],
+					outNode: outputs[j],
+					weight: Math.random() * 2 - 1,
+					isRecur: false,
+					enabled: true,
+					innov: innov
+				}));
+				innov++;
+			}
+		}
 	}
 
 	/*
