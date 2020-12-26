@@ -5,19 +5,19 @@ network, mutations, and crossover
 */
 class Genome {
 	constructor(inNum, outNum, recur, maxHidden, nodeActivation, evolveActivation) {
-		if (arguments.length === 1) { // check to see if we only recieve a genome, if so, exicute copy constructor
+		if (arguments.length === 1 && arguments[0] instanceof Genome) { // check to see if we only recieve a genome, if so, exicute copy constructor
 			let genome = arguments[0];
-			this.nodeG = genome.copyNodeG(); // a list of all node genes in this genome
-			this.connectionG = genome.copyConnectionG(); // a list of all connection genes in this genome
+			this.nodeG = genome.copyNodeG();					   // a list of copied node genes from genome
+			this.connectionG = genome.copyConnectionG(this.nodeG); // a list of all connection genes copied from genome, takes new copied nodes to reconnect connections with
 
-			this.inNum = genome.inNum; // the number of in node genes this genome will have
-			this.outNum = genome.outNum; // the number of out node genes this genome will have
+			this.inNum = genome.inNum;	 // the number of in node genes this genome copied from genome
+			this.outNum = genome.outNum; // the number of out node genes this genome copied from genome
 
-			this.recur = genome.recur; // whether or not to allow for reccurent connections
-			this.maxHidden = genome.maxHidden; // the max hidden nodes that this genome can evolve
+			this.recur = genome.recur; 		   // whether or not to allow for reccurent connections copied from genome
+			this.maxHidden = genome.maxHidden; // the max hidden nodes that this genome can evolve copied from genome
 
-			this.nodeActivation = genome.nodeActivation; // what activation function to use for the nodes
-			this.randomNodeActivation = genome.evolveActivation; // whether or not we should randomly choose an activation per node
+			this.nodeActivation = genome.nodeActivation; 		 // what activation function to use for the nodes copied from genome
+			this.randomNodeActivation = genome.evolveActivation; // whether or not we should randomly choose an activation per node copied from genome
 
 			this.phenotype = undefined;
 
@@ -44,7 +44,9 @@ class Genome {
 
 	/*
 	creates a new nodeG array exactly 
-	like this genomes nodeG then returns it
+	like this genomes nodeG then returns it.
+	doesn't copy the net Node, as the phenotype creation
+	is all done in construct network
 	*/
 	copyNodeG() {
 		let newNodeG = [];
@@ -54,17 +56,27 @@ class Genome {
 
 	/*
 	creates a new connectionG array exactly 
-	like this genomes connectionG then returns it
+	like this genomes connectionG then returns it.
+	takes a copied nodeG array from this genome to 
+	replace each connetion node ref to copied node ref.
+	depends on pre nodeG array to work.
 	*/
-	copyConnectionG() {
+	copyConnectionG(copiedNodeG) {
 		let newConnectionG = [];
-		this.connectionG.forEach(connectionGene => newConnectionG.push(connectionGene.clone()));
+		this.connectionG.forEach(connectionGene => {
+			let inNode = copiedNodeG.find(nodeGene => nodeGene.id === connectionGene.connection.inNode.id);
+			let outNode = copiedNodeG.find(nodeGene => nodeGene.id === connectionGene.connection.outNode.id);
+			newConnectionG.push(connectionGene.clone(inNode, outNode));
+		});
 		return newConnectionG;
 	}
 
-	// return a clone of this genome
+	/*
+	return a clone of this genome, all phynotype(network)
+	atributes are not copied.
+	*/
 	clone() {
-
+		return new Genome(this);
 	}
 
 	// returns an array of the input nodes in nodeG
