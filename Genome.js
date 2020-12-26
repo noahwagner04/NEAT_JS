@@ -5,21 +5,49 @@ network, mutations, and crossover
 */
 class Genome {
 	constructor(inNum, outNum, recur, maxHidden, nodeActivation, evolveActivation) {
-		this.nodeG = [];		// a list of all node genes in this genome
-		this.connectionG = [];  // a list of all connection genes in this genome
+		if (arguments.length === 1) { // check to see if we only recieve a genome, if so, exicute copy constructor
+			let genome = arguments[0];
+			this.nodeG = genome.copyNodeG(); // a list of all node genes in this genome
+			this.connectionG = genome.copyConnectionG(); // a list of all connection genes in this genome
 
-		this.inNum = inNum;	  // the number of in node genes this genome will have
-		this.outNum = outNum; // the number of out node genes this genome will have
+			this.inNum = genome.inNum; // the number of in node genes this genome will have
+			this.outNum = genome.outNum; // the number of out node genes this genome will have
 
-		this.recur = recur; 		// whether or not to allow for reccurent connections
-		this.maxHidden = maxHidden; // the max hidden nodes that this genome can evolve
+			this.recur = genome.recur; // whether or not to allow for reccurent connections
+			this.maxHidden = genome.maxHidden; // the max hidden nodes that this genome can evolve
 
-		this.nodeActivation = nodeActivation; 		  // what activation function to use for the nodes
-		this.randomNodeActivation = evolveActivation; // whether or not we should randomly choose an activation per node
+			this.nodeActivation = genome.nodeActivation; // what activation function to use for the nodes
+			this.randomNodeActivation = genome.evolveActivation; // whether or not we should randomly choose an activation per node
 
-		this.phenotype = undefined;
+			this.phenotype = undefined;
 
-		this.init(); // initializes the genome, gets overriden when this genome is a copy of another
+		} else if(arguments.length === 2){ // check to see if we recieve nodeG and connectionG, if so, build genome off of those two arrays
+
+		} else { // do the first gen constructor
+			this.nodeG = [];		// a list of all node genes in this genome
+			this.connectionG = [];  // a list of all connection genes in this genome
+
+			this.inNum = inNum;	  	// the number of in node genes this genome will have
+			this.outNum = outNum; 	// the number of out node genes this genome will have
+
+			this.recur = recur; 		// whether or not to allow for reccurent connections
+			this.maxHidden = maxHidden; // the max hidden nodes that this genome can evolve
+
+			this.nodeActivation = nodeActivation; 		  // what activation function to use for the nodes
+			this.randomNodeActivation = evolveActivation; // whether or not we should randomly choose an activation per node
+
+			this.phenotype = undefined;
+
+			this.init(); // initializes the genome, gets overriden when this genome is a copy of another
+		}
+	}
+
+	copyNodeG() {
+		
+	}
+
+	copyConnectionG() {
+
 	}
 
 	// return a clone of this genome
