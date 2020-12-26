@@ -14,12 +14,12 @@ class Genome {
 		this.recur = config.recur; 		   // whether or not to allow for reccurent connections
 		this.maxHidden = config.maxHidden; // the max hidden nodes that this genome can evolve
 
-		this.nodeActivation = config.nodeActivation; 		 // this atribute decides how nodes should be activated
+		this.nodeActivation = config.nodeActivation; 		 // what activation function to use for the nodes
 		this.randomNodeActivation = config.evolveActivation; // whether or not we should randomly choose an activation per node
 
 		this.phenotype = undefined;
 
-		this.init(); // initializes the genome
+		this.init(); // initializes the genome, gets overriden when this genome is a copy of another
 	}
 
 	// return a clone of this genome
@@ -50,19 +50,17 @@ class Genome {
 	and connection genes
 	*/
 	init() {
-		this.initInputGenes(0);
-		this.initOutputGenes(this.nodeG.length);
-		this.initConnections(this.getInputs(), this.getOutputs());
-	}
-
-	/*
-	initializes the input node genes,
-	checks whether a node should be a bias 
-	or input, then adds it to the nodeG array, labels
-	node ids starting at a given id
-	*/
-	initInputGenes(id) {
-		for (let i = id; i < this.inNum + id; i++) {
+		let id = 0;
+		let inputs = [];
+		let outputs = [];
+		let innov = 0;
+		/*
+		initializes the input node genes,
+		checks whether a node should be a bias 
+		or input, then adds it to the nodeG array, labels
+		node ids starting at a given id
+		*/
+		for (let i = 0; i < this.inNum; i++) {
 			let currentNodeG = undefined;
 			if (i > 0) currentNodeG = new NodeGene({
 				id: i,
@@ -75,14 +73,13 @@ class Genome {
 				placement: nodePlaces.BIAS
 			});
 			this.nodeG.push(currentNodeG);
+			id++;
 		}
-	}
 
-	/*
-	initializes the output node genes, labels the
-	id of the nodes starting at a given id
-	*/
-	initOutputGenes(id) {
+		/*
+		initializes the output node genes, labels the
+		id of the nodes starting at a given id
+		*/
 		for (let i = id; i < this.outNum + id; i++) {
 			let currentNodeG = new NodeGene({
 				id: i,
@@ -91,15 +88,15 @@ class Genome {
 			});
 			this.nodeG.push(currentNodeG);
 		}
-	}
 
-	/*
-	initializes connection genes of this genome, takes
-	two arrays, input and output to iterate over, weight is
-	between -1, 1
-	*/
-	initConnections(inputs, outputs) {
-		let innov = 0;
+		inputs = this.getInputs();
+		outputs = this.getOutputs();
+
+		/*
+		initializes connection genes of this genome, takes
+		two arrays, input and output to iterate over, weight is
+		between -1, 1
+		*/
 		inputs.forEach(input => {
 			outputs.forEach(output => {
 				this.connectionG.push(new ConnectionGene({
@@ -113,6 +110,7 @@ class Genome {
 				innov++;
 			});
 		});
+		return this;
 	}
 
 	/*
@@ -120,7 +118,55 @@ class Genome {
 	connection genes
 	*/
 	constructNetwork() {
+		let inputs = [];
+		let outputs = [];
+		let all = [];
 
+		/*
+		creates a network node for each gene node
+		in nodeG array, chooses activation function
+		based on bool randomNodeActivation, then
+		adds it to the apropiate array, input, output, or all
+		*/
+		this.nodeG.forEach(nodeGene => {
+			let activationFunc = this.randomNodeActivation ? Genome.chooseActivationFunc() : this.nodeActivation;
+			let node = nodeGene.createNetNode(activationFunc).netNode;
+			if (nodeGene.ntype === nodeTypes.SENSOR) inputs.push(node);
+			else if (nodeGene.placement === nodePlaces.OUTPUT) outputs.push(node);
+			all.push(node);
+		});
+
+		/*
+		creates new connections that live in
+		the nodes in / out connection arrays,
+		their inNode and outNode is a ref to 
+		the networks nodes, not the node genes
+		*/
+		this.connectionG.forEach(connectionGene => {
+			if(connectionGene.enabled === true) {
+				let connection = connectionGene.connection;
+				let inNode = connection.inNode.netNode;
+				let outNode = connection.outNode.netNode;
+
+				outNode.addIncoming(inNode, connection.weight, connection.isRecur);
+			}
+		});
+
+		/*
+		initializes the network with the
+		node arrays, the adds a ref to this
+		genome, and adds a ref to the network 
+		in this.phenotype
+		*/
+		let network = new Network({
+			inputs: inputs,
+			outputs: outputs,
+			all: all
+		});
+
+		network.genotype = this;
+		this.phenotype = network;
+		return this;
 	}
 
 	// adds a new connection to this genome
