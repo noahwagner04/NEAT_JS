@@ -27,18 +27,6 @@ let nodePlaces =  {
 };
 
 /*
-these are the config types for any object in the lib.
-every object will take a config object in its constructor
-with a type attribute, it will make it easier for different 
-constructor types for objects
-*/
-let configTypes = {
-	CONFIG_ONE: 0,
-	CONFIG_TWO: 1,
-	COPY:2
-};
-
-/*
 possible innovation types in a genome,
 this helps with checking if a mutation
 already has occurred in the population
