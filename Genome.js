@@ -47,7 +47,7 @@ class Genome {
 
 	/*
 	initialize function, creates the initial node genes
-	and connection genes
+	and connection genes, only used for first gen genomes
 	*/
 	init() {
 		let id = 0;
