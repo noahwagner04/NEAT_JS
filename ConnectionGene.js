@@ -7,10 +7,7 @@ class ConnectionGene {
 	}
 
 	/* 
-	creates a connection, it is
-	helpful to have a reference to the 
-	connection of this gene for mutation
-	and genetic encoding purposes
+	creats a connection obj on this gene
 	*/
 	createConnection(config) {
 		let connectionConfig = {
