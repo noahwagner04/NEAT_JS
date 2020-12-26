@@ -4,18 +4,18 @@ responsible for creating the
 network, mutations, and crossover
 */
 class Genome {
-	constructor(config) {
+	constructor(inNum, outNum, recur, maxHidden, nodeActivation, evolveActivation) {
 		this.nodeG = [];		// a list of all node genes in this genome
 		this.connectionG = [];  // a list of all connection genes in this genome
 
-		this.inNum = config.inNum;	 // the number of in node genes this genome will have
-		this.outNum = config.outNum; // the number of out node genes this genome will have
+		this.inNum = inNum;	  // the number of in node genes this genome will have
+		this.outNum = outNum; // the number of out node genes this genome will have
 
-		this.recur = config.recur; 		   // whether or not to allow for reccurent connections
-		this.maxHidden = config.maxHidden; // the max hidden nodes that this genome can evolve
+		this.recur = recur; 		// whether or not to allow for reccurent connections
+		this.maxHidden = maxHidden; // the max hidden nodes that this genome can evolve
 
-		this.nodeActivation = config.nodeActivation; 		 // what activation function to use for the nodes
-		this.randomNodeActivation = config.evolveActivation; // whether or not we should randomly choose an activation per node
+		this.nodeActivation = nodeActivation; 		  // what activation function to use for the nodes
+		this.randomNodeActivation = evolveActivation; // whether or not we should randomly choose an activation per node
 
 		this.phenotype = undefined;
 
@@ -62,16 +62,8 @@ class Genome {
 		*/
 		for (let i = 0; i < this.inNum; i++) {
 			let currentNodeG = undefined;
-			if (i > 0) currentNodeG = new NodeGene({
-				id: i,
-				ntype: nodeTypes.SENSOR,
-				placement: nodePlaces.INPUT
-			});
-			else currentNodeG = new NodeGene({
-				id: i,
-				ntype: nodeTypes.SENSOR,
-				placement: nodePlaces.BIAS
-			});
+			if (i > 0) currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.INPUT);
+			else currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.BIAS);
 			this.nodeG.push(currentNodeG);
 			id++;
 		}
@@ -81,11 +73,7 @@ class Genome {
 		id of the nodes starting at a given id
 		*/
 		for (let i = id; i < this.outNum + id; i++) {
-			let currentNodeG = new NodeGene({
-				id: i,
-				ntype: nodeTypes.NEURON,
-				placement: nodePlaces.OUTPUT
-			});
+			let currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT);
 			this.nodeG.push(currentNodeG);
 		}
 
@@ -99,14 +87,7 @@ class Genome {
 		*/
 		inputs.forEach(input => {
 			outputs.forEach(output => {
-				this.connectionG.push(new ConnectionGene({
-					inNode: input,
-					outNode: output,
-					weight: Math.random() * 2 - 1,
-					isRecur: false,
-					enabled: true,
-					innov: innov
-				}));
+				this.connectionG.push(new ConnectionGene(input, output, Math.random() * 2 - 1, false, innov, true));
 				innov++;
 			});
 		});
@@ -158,11 +139,7 @@ class Genome {
 		genome, and adds a ref to the network 
 		in this.phenotype
 		*/
-		let network = new Network({
-			inputs: inputs,
-			outputs: outputs,
-			all: all
-		});
+		let network = new Network(inputs, outputs, all);
 
 		network.genotype = this;
 		this.phenotype = network;

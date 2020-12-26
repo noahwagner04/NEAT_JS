@@ -5,20 +5,20 @@ and sends them out to other nodes with
 other connections
 */
 class Node {
-	constructor(config) {
-		this.id = config.id;
-		this.type = config.type;			// type of this node, either NEURON of SENSOR
-		this.placement = config.placement;  // placement of node, either BIAS, INPUT, HIDDEN, or OUPUT
+	constructor(id, type, placement, activation) {
+		this.id = id;
+		this.type = type;			 // type of this node, either NEURON of SENSOR
+		this.placement = placement;  // placement of node, either BIAS, INPUT, HIDDEN, or OUPUT
 
 		this.activationCount = 0;
 		this.lastActivation = 0; 	// previous time steps activation for recurrency
 		//this.lastActivation2 = 0; // two time steps ago activation for special recurrency cases
 
-		this.activesum = 0;		 			 	 // the sum of all the incoming connections
-		this.activation = 0;	 			 	 // activesum after its ran through the activationFunc
-		this.activeFlag = false; 			 	 // whether or not this node is currently activated
-		this.visited = false;					 // true when a node was fed forward durring activation
-		this.activationFunc = config.activation; // whether or not this node can choose its own activation function
+		this.activesum = 0;		 		  // the sum of all the incoming connections
+		this.activation = 0;	 		  // activesum after its ran through the activationFunc
+		this.activeFlag = false; 		  // whether or not this node is currently activated
+		this.visited = false;			  // true when a node was fed forward durring activation
+		this.activationFunc = activation; // whether or not this node can choose its own activation function
 
 		this.inConnections = [];  	// array of all the ref incomming connections to the neuron
 		this.outConnections = []; 	// array of all the ref outgoing connections to the neuron
@@ -74,13 +74,7 @@ class Node {
 	*/
 	addIncoming(node, weight, recur) {
 		if (this.type !== nodeTypes.SENSOR) {
-			let config = {
-				inNode: node,
-				outNode: this,
-				weight: weight,
-				isRecur: recur
-			};
-			let connection = new Connection(config);
+			let connection = new Connection(node, this, weight, recur);
 			this.inConnections.push(connection);
 			node.outConnections.push(connection);
 			return this;

@@ -4,10 +4,10 @@ and gets constructed by the genome, its soul
 purpose is to compute an output
 */
 class Network {
-	constructor(config) {
-		this.inputs = config.inputs;    // just input neurons
-		this.outputs = config.outputs;  // just output neurons
-		this.all = config.all;		    // all neurons, HIDDEN, OUTPUT, BIAS, and INPUT
+	constructor(inputs, outputs, all) {
+		this.inputs = inputs;    // just input neurons
+		this.outputs = outputs;  // just output neurons
+		this.all = all;		     // all neurons, HIDDEN, OUTPUT, BIAS, and INPUT
 
 		this.genotype = undefined;	    // used to match the genome to this network
 

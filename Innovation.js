@@ -4,20 +4,20 @@ innovations, simply has an id and the
 inovation num
 */
 class Innovation {
-	constructor(config) {
-		this.inNodeId = config.inNodeId;
-		this.outNodeId = config.outNodeId;
+	constructor(inNodeId, outNodeId, innov1, innov2, newId, oldInnov, newWeight, recur) {
+		this.inNodeId = inNodeId;
+		this.outNodeId = outNodeId;
 
-		this.innovation = config.innov1;   // the number assigned to this innov
-		this.innovation2 = config.innov2;  // only used if this is a node mutation, both innovs act as innov nums for two new connections
+		this.innovation = innov1;   // the number assigned to this innov
+		this.innovation2 = innov2;  // only used if this is a node mutation, both innovs act as innov nums for two new connections
 
-		this.nodeId = config.newId;		   // new id of node, only used if this is a node mutation
-		this.oldInnov = config.oldInnov;   // only used if node mutation, innov number of the connection this node is splitting
+		this.nodeId = newId;		// new id of node, only used if this is a node mutation
+		this.oldInnov = oldInnov;   // only used if node mutation, innov number of the connection this node is splitting
 
-		this.newWeight = config.newWeight; // only used if this is a connection mutation, weight of the connection
-		this.recur = config.recur;		   // recurrent flag of new connection, only used of this is a connection mutation
+		this.newWeight = newWeight; // only used if this is a connection mutation, weight of the connection
+		this.recur = config.recur;  // recurrent flag of new connection, only used of this is a connection mutation
 
-		this.chooseType(); 				   // chooses type
+		this.chooseType(); 			// chooses type
 	}
 
 	/*
