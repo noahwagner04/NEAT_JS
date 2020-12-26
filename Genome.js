@@ -42,12 +42,24 @@ class Genome {
 		}
 	}
 
+	/*
+	creates a new nodeG array exactly 
+	like this genomes nodeG then returns it
+	*/
 	copyNodeG() {
-		
+		let newNodeG = [];
+		this.nodeG.forEach(nodeGene => newNodeG.push(nodeGene.clone()));
+		return newNodeG;
 	}
 
+	/*
+	creates a new connectionG array exactly 
+	like this genomes connectionG then returns it
+	*/
 	copyConnectionG() {
-
+		let newConnectionG = [];
+		this.connectionG.forEach(connectionGene => newConnectionG.push(connectionGene.clone()));
+		return newConnectionG;
 	}
 
 	// return a clone of this genome
