@@ -203,7 +203,8 @@ class Genome {
 
 	/*
 	breeds two gemomes together using the NEAT
-	competeing conventions solution
+	competeing conventions solution returns a new
+	genome
 	*/
 	static breed(genome1, genome2, fit1, fit2) {
 
