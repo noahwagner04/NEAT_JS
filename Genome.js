@@ -207,7 +207,7 @@ class Genome {
 	adds a new node on a connection, splitting it in two
 	and disabling it. Creates two new connections, the one leading
 	to the new node(which receives a weight of one 
-	for minimal decrease in preformance) and the one going
+	for minimal decrease in preformance) and the one going out
 	from the new node(which receives the same weight as the connection 
 	originally split)
 	*/
