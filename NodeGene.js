@@ -9,6 +9,7 @@ class NodeGene {
 			this.placement = nodeGene.placement;     // the placement of this node, either BIAS, INPUT, HIDDEN, or OUTPUT
 		} else {
 			this.netNode = undefined; 	   // a reference to the node this gene creates
+			this.duplicate = undefined;		   // used for genome duplication
 			this.id = id;
 			this.ntype = ntype; 		   // the type of this node, either NEURON or SENSOR
 			this.placement = placement;    // the placement of this node, either BIAS, INPUT, HIDDEN, or OUTPUT
@@ -24,6 +25,8 @@ class NodeGene {
 
 	// instaniates a new node gene exactly like this one
 	clone() {
-		return new NodeGene(this);
+		let newNodeGene = new NodeGene(this);
+		this.duplicate = newNodeGene;
+		return newNodeGene;
 	}
 }

@@ -28,14 +28,13 @@ class Connection {
 	this one, this is can only be used on 
 	a connection within a connectionGene,
 	with inNode and outNode being type of
-	nodeGenes, optional parameters for setting
-	in / outNodes
+	nodeGenes
 	*/
-	clone(inNodeGene, outNodeGene) {
+	clone() {
 		if(this.inNode instanceof NodeGene && this.outNode instanceof NodeGene) {
 			let connection = new Connection(this);
-			connection.inNode = inNodeGene;
-			connection.outNode = outNodeGene;
+			connection.inNode = this.inNode.duplicate;
+			connection.outNode = this.outNode.duplicate;
 			return connection;
 		}
 		console.log("cannot clone a network connection, can only clone a connection within a ConnectionGene");

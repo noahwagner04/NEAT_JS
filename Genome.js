@@ -7,8 +7,8 @@ class Genome {
 	constructor(inNum, outNum, recur, maxHidden, nodeActivation, evolveActivation) {
 		if (arguments.length === 1 && arguments[0] instanceof Genome) { // check to see if we only recieve a genome, if so, exicute copy constructor
 			let genome = arguments[0];
-			this.nodeG = genome.copyNodeG();					   // a list of copied node genes from genome
-			this.connectionG = genome.copyConnectionG(this.nodeG); // a list of all connection genes copied from genome, takes new copied nodes to reconnect connections with
+			this.nodeG = genome.copyNodeG();			 // a list of copied node genes from genome
+			this.connectionG = genome.copyConnectionG(); // a list of all connection genes copied from genome, takes new copied nodes to reconnect connections with
 
 			this.inNum = genome.inNum;	 // the number of in node genes this genome copied from genome
 			this.outNum = genome.outNum; // the number of out node genes this genome copied from genome
@@ -61,12 +61,10 @@ class Genome {
 	replace each connetion node ref to copied node ref.
 	depends on pre nodeG array to work.
 	*/
-	copyConnectionG(copiedNodeG) {
+	copyConnectionG() {
 		let newConnectionG = [];
 		this.connectionG.forEach(connectionGene => {
-			let inNode = copiedNodeG.find(nodeGene => nodeGene.id === connectionGene.connection.inNode.id);
-			let outNode = copiedNodeG.find(nodeGene => nodeGene.id === connectionGene.connection.outNode.id);
-			newConnectionG.push(connectionGene.clone(inNode, outNode));
+			newConnectionG.push(connectionGene.clone());
 		});
 		return newConnectionG;
 	}
