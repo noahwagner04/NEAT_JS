@@ -197,7 +197,7 @@ class Genome {
 	}
 
 	// adds a new connection to this genome
-	mutateAddConection(innovs) {
+	mutateAddConection(innovs, currInnov) {
 
 	}
 
@@ -209,7 +209,7 @@ class Genome {
 	from the new node(which receives the same weight as the connection 
 	originally split)
 	*/
-	mutateAddNode(innovs) {
+	mutateAddNode(innovs, currNodeId, currInnov) {
 
 	}
 
