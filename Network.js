@@ -90,7 +90,7 @@ class Network {
 	*/
 	loadSensors(inputArray) {
 		if (inputArray.length !== this.inputs.length - 1) {
-			console.log("WARNING: netowrk receiving an invalid number inputs");
+			console.log("netowrk receiving an invalid number inputs");
 		} else {
 			let index = 0;
 			this.inputs.forEach(node => {
@@ -109,7 +109,7 @@ class Network {
 	*/
 	overrideOutputs(outputArray) {
 		if (outputArray.length !== this.outputs.length) {
-			console.log("WARNING: netowrk receiving an invalid number override outputs");
+			console.log("netowrk receiving an invalid number override outputs");
 		} else {
 			for (let i = 0; i < this.outputs.length; i++) {
 				this.outputs[i].overrideOutput(outputArray[i]);
