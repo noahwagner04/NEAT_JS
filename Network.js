@@ -84,9 +84,9 @@ class Network {
 	/*
 	loads an array of values to all
 	the input nodes, each index of the 
-	array goes to each input neuron, array
-	has to be the same length as the input
-	array
+	array goes to each input neuron, array has
+	to be the same length as inputs array -1 to 
+	ignore the BIAS node
 	*/
 	loadSensors(inputArray) {
 		if (inputArray.length !== this.inputs.length - 1) {
