@@ -245,7 +245,7 @@ class Genome {
 	value. It uses the compatibility threshold global parameter to see
 	whether they are in the same species.
 	*/
-	static compatibility(genome1, genome2) {
+	static compatibility(genome1, genome2, c1, c2, c3) {
 
 	}
 
