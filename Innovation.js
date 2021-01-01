@@ -4,35 +4,29 @@ innovations, simply has an id and the
 inovation num
 */
 class Innovation {
-	constructor(inNodeId, outNodeId, innov1, innov2, newId, oldInnov, newWeight, recur) {
-		this.inNodeId = inNodeId;
-		this.outNodeId = outNodeId;
+	constructor(inNodeId, outNodeId, innov1, ...args) {
+		if (args.length === 3) { 		// run node constructor
+			this.inNodeId = inNodeId;
+			this.outNodeId = outNodeId;
 
-		this.innovation = innov1;   // the number assigned to this innov
-		this.innovation2 = innov2;  // only used if this is a node mutation, both innovs act as innov nums for two new connections
+			this.innovation = innov1;   // the number assigned to this innov
+			this.innovation2 = args[0]; // only used if this is a node mutation, both innovs act as innov nums for two new connections
 
-		this.nodeId = newId;		// new id of node, only used if this is a node mutation
-		this.oldInnov = oldInnov;   // only used if node mutation, innov number of the connection this node is splitting
+			this.nodeId = args[1];	    // new id of node, only used if this is a node mutation
+			this.oldInnov = args[2];    // only used if node mutation, innov number of the connection this node is splitting
 
-		this.newWeight = newWeight; // only used if this is a connection mutation, weight of the connection
-		this.recur = config.recur;  // recurrent flag of new connection, only used of this is a connection mutation
-
-		this.chooseType(); 			// chooses type
-	}
-
-	/*
-	an innovation can be of two types,
-	either a NEWNODE, or a NEW CONNECTION
-	this function decides which type it is
-	based off the config input
-	*/
-	chooseType() {
-		if (this.innovation2 === undefined &&
-			this.nodeId === undefined &&
-			this.oldInnov === undefined) {
-			this.type = innovTypes.NEWCONNECTION;
-		} else {
 			this.type = innovTypes.NEWNODE;
+
+		} else if (args.length === 2) { // run connection constructor
+			this.inNodeId = inNodeId;
+			this.outNodeId = outNodeId;
+
+			this.innovation = innov1;
+
+			this.newWeight = args[0];  // only used if this is a connection mutation, weight of the connection
+			this.recur = args[1]; 	   // recurrent flag of new connection, only used of this is a connection mutation
+
+			this.type = innovTypes.NEWCONNECTION;
 		}
 	}
 }
