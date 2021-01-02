@@ -195,9 +195,12 @@ class Genome {
 		this.phenotype = network;
 		return this;
 	}
-
-	// adds a new connection to this genome
-	mutateAddConection(innovs, currInnov) {
+	/*
+	adds a new connection to this genome,
+	takes in population to access innovs and
+	currInnov
+	*/
+	mutateAddConection(population) {
 
 	}
 
@@ -207,10 +210,95 @@ class Genome {
 	to the new node(which receives a weight of one 
 	for minimal decrease in preformance) and the one going out
 	from the new node(which receives the same weight as the connection 
-	originally split)
+	originally split) takes in population to access innovs array, currNodeId
+	and currInnov
 	*/
-	mutateAddNode(innovs, currNodeId, currInnov) {
+	mutateAddNode(population) {
+		let geneToSplit = undefined;
+		let newGene1 = undefined;
+		let newGene2 = undefined;
+		let newNodeGene = undefined;
 
+		/*
+		get the gene to split, biasing older genes for 
+		minimal effect of the change, allows spliting 
+		of genes distrubute evenly amongst all genes
+		*/
+		for (let i = 0; i < this.connectionG.length; i++) {
+			let currGene = this.connectionG[i];
+			if (currGene.connection.inNode.placement === nodePlaces.BIAS || currGene.enabled === false) continue;
+			else if (Math.random() < 0.7) {
+				geneToSplit = currGene;
+				break;
+			} else if (i === this.connectionG.length - 1) geneToSplit = currGene;
+		}
+
+		if (geneToSplit === undefined) {
+			return;
+		}
+
+		geneToSplit.enabled = false;
+
+		let connection = geneToSplit.connection;
+		let oldWeight = geneToSplit.connection.weight;
+
+		let inNodeGene = geneToSplit.connection.inNode;
+		let outNodeGene = geneToSplit.connection.outNode;
+
+		let recur = geneToSplit.connection.isRecur;
+
+
+		/*
+		check if this mutation has already occurred
+		in the rest of the population, if it has, make
+		the new nodes id the same as the same innov's id,
+		and make both new gene's innov nums be the same as
+		the matched innov, if not, make new nodes id the currId + 1,
+		and the genes innovs currInnov, and currInnov + 1
+		*/
+		let done = false;
+		let index = 0;
+		while (!done) {
+			let innov = population.innovations[index];
+			if (index === population.innovations.length) {
+				newNodeGene = new NodeGene(population.currNodeId + 1, nodeTypes.NEURON, nodePlaces.HIDDEN);
+				if (recur) {
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, population.currInnov, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, population.currInnov + 1, true);
+				} else {
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, false, population.currInnov, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, population.currInnov + 1, true);
+				}
+				population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, population.currInnov, population.currInnov + 1, population.currNodeId + 1, geneToSplit.innov));
+				done = true;
+			} else if (innov.type === innovTypes.NEWNODE &&
+				innov.inNodeId === inNodeGene.id &&
+				innov.outNodeId === outNodeGene.id &&
+				innov.oldInnov === geneToSplit.innov) {
+				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN);
+				if (recur) {
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, innov.innovation, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, innov.innovation2, true);
+				} else {
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, false, innov.innovation, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, innov.innovation2, true);
+				}
+				done = true;
+			} else index++;
+		}
+
+		population.currInnov += 2;
+		population.currNodeId += 1;
+
+		/*
+		add the new genes and nodes to the
+		nodeG and connectionG arrays, adds them
+		in the correct order
+		*/
+		this.addGene(newGene1);
+		this.addGene(newGene2);
+		this.addNode(newNodeGene);
+		return this;
 	}
 
 	/*
@@ -227,6 +315,50 @@ class Genome {
 	*/
 	mutate(addNodeRate, addConnectionRate, randomizeRate) {
 
+	}
+
+	/*
+	sorts the connectionG array from smallest innov
+	to greatest innov
+	*/
+	sortGenes() {
+		this.connectionG.sort((a, b) => a.innov - b.innov);
+		return this;
+	}
+
+	/*
+	sorts the nodeG array from smallest id
+	to greatest id
+	*/
+	sortNodes() {
+		this.nodeG.sort((a, b) => a.id - b.id);
+		return this;
+	}
+
+	/*
+	adds a gene to the connetionG array
+	in the correct spot
+	*/
+	addGene(connectionGene) {
+		let index = 0;
+		while (index !== this.connectionG.length && this.connectionG[index].innov < connectionGene.innov) {
+			index++;
+		}
+		this.connectionG.splice(index, 0, connectionGene);
+		return this;
+	}
+
+	/*
+	adds a node gene to the nodeG array
+	in the correct spot
+	*/
+	addNode(nodeGene) {
+		let index = 0;
+		while (index !== this.nodeG.length && this.nodeG[index].id < nodeGene.id) {
+			index++;
+		}
+		this.nodeG.splice(index, 0, nodeGene);
+		return this;
 	}
 
 	/*
