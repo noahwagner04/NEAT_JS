@@ -308,7 +308,29 @@ class Genome {
 	mutations are bias towards newer connections.
 	*/
 	mutateWeights(rate, scale) {
+		let newGeneDropOff = this.connectionG.length * 0.8;
+		for (let i = 0; i < this.connectionG.length; i++) {
+			let connection = this.connectionG[i].connection;
+			let mutateNum = (Math.random() * 2 - 1) * scale;
+			let perturbProb = 0;
+			let randomizeProb = 0;
 
+			if(this.connectionG.length >= 10 && 1 > newGeneDropOff) {
+				perturbProb = 0.3;
+				randomizeProb = 0.1;
+			} else {
+				perturbProb = 1 - rate;
+				randomizeProb = 1 - rate - 0.1;
+			}
+
+			let rdm = Math.random();
+			if(rdm > perturbProb) {
+				connection.weight += mutateNum;
+			} else if(rdm > randomizeProb) {
+				connection.weight = mutateNum;
+			}
+		}
+		return this;
 	}
 
 	/*
@@ -316,7 +338,7 @@ class Genome {
 	methods to this one method, takes population for
 	inputs to mutate funcs
 	*/
-	mutate(addNodeRate, addConnectionRate, randomizeRate, scale, population) {
+	mutate(addNodeRate, addConnectionRate, rate, scale, population) {
 
 	}
 
