@@ -223,6 +223,7 @@ class Genome {
 		get the gene to split, biasing older genes for 
 		minimal effect of the change, allows spliting 
 		of genes distrubute evenly amongst all genes
+		(splits genes that haven't been split yet)
 		*/
 		for (let i = 0; i < this.connectionG.length; i++) {
 			let currGene = this.connectionG[i];
@@ -303,9 +304,10 @@ class Genome {
 
 	/*
 	either perturbes a weight, or randomizes it.
-	This is done to all connections.
+	This is done to all connections. randomize weight 
+	mutations are bias towards newer connections.
 	*/
-	mutateWeights(randomizeRate) {
+	mutateWeights(rate, scale) {
 
 	}
 
@@ -314,7 +316,7 @@ class Genome {
 	methods to this one method, takes population for
 	inputs to mutate funcs
 	*/
-	mutate(addNodeRate, addConnectionRate, randomizeRate, population) {
+	mutate(addNodeRate, addConnectionRate, randomizeRate, scale, population) {
 
 	}
 
