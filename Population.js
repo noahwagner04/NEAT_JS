@@ -1,5 +1,5 @@
 class Population {
-	constructor(genome, size) {
+	constructor(genome, size, NEAT) {
 		this.genomes = [];
 		this.first = genome;
 		this.size = size;
