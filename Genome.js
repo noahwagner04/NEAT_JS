@@ -326,6 +326,11 @@ class Genome {
 
 	}
 
+	// finds a dissabled connection gene and renables it
+	mutateRenable() {
+
+	}
+
 	/*
 	sorts the connectionG array from smallest innov
 	to greatest innov
