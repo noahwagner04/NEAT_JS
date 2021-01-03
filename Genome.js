@@ -404,7 +404,7 @@ class Genome {
 	competeing conventions solution returns a new
 	genome
 	*/
-	static breed(genome1, genome2, fit1, fit2) {
+	static crossover(genome1, genome2, fit1, fit2) {
 
 	}
 

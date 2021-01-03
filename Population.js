@@ -40,11 +40,7 @@ class Population {
 
 	}
 
-	getChamp() {
-
-	}
-
 	updateWinner(champ) {
-		
+
 	}
 }
