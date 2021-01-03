@@ -336,9 +336,9 @@ class Genome {
 	/*
 	mutates the genome, combining all the mutate
 	methods to this one method, takes population for
-	inputs to mutate funcs
+	inputs to mutate funcs (addNodeRate, addConnectionRate, rate, scale)
 	*/
-	mutate(addNodeRate, addConnectionRate, rate, scale, population) {
+	mutate(population) {
 
 	}
 
