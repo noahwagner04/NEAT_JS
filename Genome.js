@@ -319,6 +319,14 @@ class Genome {
 	}
 
 	/*
+	toggles a random connection gene on or off a given
+	number of times, each time picking a random connection
+	*/
+	mutateToggleEnable(times) {
+
+	}
+
+	/*
 	sorts the connectionG array from smallest innov
 	to greatest innov
 	*/
