@@ -200,8 +200,149 @@ class Genome {
 	takes in population to access innovs and
 	currInnov
 	*/
-	mutateAddConection(population) {
+	mutateAddConnection(tries, population) {
+		let newConnectionGene = undefined;
+		let node1 = undefined;
+		let node2 = undefined;
+		let nodes = [];
+		let doRecur = false;
+		let tryCount = 0;
+		let recurFlag = false;
+		let count = 0;
+		let thresh = this.nodeG.length * this.nodeG.length;
+		let found = false;
 
+		//decide whether or not to make this link recurent
+		if (Math.random() < population.NEAT.recurProb) {
+			doRecur = true;
+		}
+
+		/*
+		put all non-sensor nodes in an array
+		this is done to help prevent connections
+		inputing to input nodes(we dont want that)
+		*/
+		this.nodeG.forEach(node => {
+			if (node.ntype !== nodeTypes.SENSOR) {
+				nodes.push(node);
+			}
+		});
+
+		/*
+		this is done to update the phenotype to make 
+		the Network.checkRecur func to work
+		*/
+		this.constructNetwork();
+
+		// run until a certain amount of attempts
+		while (tryCount <= tries) {
+			let index1 = 0;
+			let index2 = 0;
+			let redo = false;
+
+			if (doRecur) {
+				let loopRecur = false;
+				/*
+				these three blocks pick the potential
+				nodes for the in / out of the new gene randomly.
+				loop recur means to have the connection
+				loop on one node
+				*/
+				if (Math.random() > 0.5) {
+					loopRecur = true;
+				}
+				if (loopRecur) {
+					index1 = Math.floor(Math.random() * nodes.length);
+					index2 = index1;
+				} else {
+					index1 = Math.floor(Math.random() * nodes.length);
+					index2 = Math.floor(Math.random() * nodes.length);
+				}
+
+				node1 = nodes[index1];
+				node2 = nodes[index2];
+
+				// check to see if this gene already exists
+				for (let i = 0; i < this.connectionG.length; i++) {
+					let connection = this.connectionG[i].connection;
+					if (connection.outNode.ntype !== nodeTypes.SENSOR 
+						&& connection.inNode === node1 
+						&& connection.outNode === node2 
+						&& connection.isRecur === true) {
+						redo = true;
+					}
+				}
+
+				if (redo === true) {
+					tryCount++;
+				} else {
+					// check to see if this recurent is really recurrent
+					recurFlag = Network.checkRecur(node1.netNode, node2.netNode, count, thresh);
+					if(recurFlag) {
+						found = true;
+						break;
+					} else {
+						tryCount++;
+					}
+				}
+			} else {
+				// pick the potential nodes randomly
+				index1 = Math.floor(Math.random() * this.nodeG.length);
+				index2 = Math.floor(Math.random() * nodes.length);
+
+				node1 = this.nodeG[index1];
+				node2 = nodes[index2];
+
+				// check to see if this gene already exists
+				for (let i = 0; i < this.connectionG.length; i++) {
+					let connection = this.connectionG[i].connection;
+					if (connection.outNode.ntype !== nodeTypes.SENSOR 
+						&& connection.inNode === node1 
+						&& connection.outNode === node2 
+						&& connection.isRecur === false) {
+						redo = true;
+					}
+				}
+				if(redo) {
+					tryCount++;
+				} else {
+					// if recurrent, redo
+					recurFlag = Network.checkRecur(node1.netNode, node2.netNode, count, thresh);
+
+					if(recurFlag) {
+						tryCount++;
+					} else {
+						found = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!found) return;
+		else {
+			let done = false;
+			let index = 0;
+			while (!done) {
+				let innov = population.innovations[index];
+				if (index === population.innovations.length) {
+					let weight = Math.random() * 2 - 1;
+					newConnectionGene = new ConnectionGene(node1, node2, weight, recurFlag, population.currInnov, true);
+					population.innovations.push(new Innovation(node1.id, node2.id, population.currInnov, weight, recurFlag))
+					done = true;
+				} else if (innov.type === innovTypes.NEWCONNECTION &&
+					innov.inNodeId === node1.id &&
+					innov.outNodeId === node2.id &&
+					innov.recur === recurFlag) {
+					newConnectionGene = new ConnectionGene(node1, node2, innov.newWeight, recurFlag, innov.innovation, true);
+					done = true;
+				} else index++;
+			}
+
+			population.currInnov++;
+			this.addGene(newConnectionGene);
+			return this;
+		}
 	}
 
 	/*
