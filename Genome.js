@@ -320,6 +320,10 @@ class Genome {
 		}
 
 		if (!found) return;
+		/*
+		check to see if this mutation has already 
+		happened somewhere in the population
+		*/ 
 		else {
 			let done = false;
 			let index = 0;
@@ -340,7 +344,7 @@ class Genome {
 			}
 
 			population.currInnov++;
-			this.addGene(newConnectionGene);
+			this.addGene(newConnectionGene); // add the gene to the correct place
 			return this;
 		}
 	}
