@@ -16,7 +16,8 @@ class NEAT {
 		this.mutateWeightsProb = config.mating.mutateWeightsProb;
 		this.mutateNodeProb = config.mating.addNodeProb;
 		this.mutateConnectionProb = config.mating.addConnectionProb;
-		this.disableChance = config.mating.disableChance;
+		this.renableProb = config.mating.renableProb;
+		this.toggleEnableProb = config.mating.toggleEnableProb;
 		this.mateOnlyProb = config.mating.mateOnlyProb;
 
 		this.popSize = config.populationSize;
