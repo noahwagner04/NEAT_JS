@@ -230,7 +230,7 @@ class Genome {
 
 		/*
 		this is done to update the phenotype to make 
-		the Network.checkRecur func to work
+		the Network.checkRecur func work
 		*/
 		this.constructNetwork();
 
