@@ -22,7 +22,8 @@ class NEAT {
 
 		this.popSize = config.populationSize;
 
-		this.net = config.network;
+		this.inputs = config.network.inputs;
+		this.outputs = config.network.outputs;
 		this.activationFunction = config.network.activationFunction;
 		this.randomActivation = config.network.randomActivation;
 	}
