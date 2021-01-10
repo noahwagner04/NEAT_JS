@@ -2,7 +2,7 @@ class NEAT {
 	constructor(config) {
 		this.disjointCoefficient = config.compatibility.disjointCoefficient;
 		this.excessCoefficient = config.compatibility.excessCoefficient;
-		this.weightDifferenceCoefficient = config.compatibility.weightDifferenceCoefficient;
+		this.weightDiffCoefficient = config.compatibility.weightDiffCoefficient;
 		this.compatibilityThresh = config.compatibility.threshold;
 		this.compatibilityModifier = config.compatibility.modifier;
 
