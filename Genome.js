@@ -484,7 +484,23 @@ class Genome {
 	inputs to mutate funcs (addNodeRate, addConnectionRate, rate, scale)
 	*/
 	mutate(population) {
-
+		let rdm = Math.random();
+		if (rdm < population.NEAT.mutateNodeProb) {
+			this.mutateAddNode(population);
+		} else if (rdm < population.NEAT.mutateConnectionProb) {
+			this.mutateAddConnection(20, population);
+		} else {
+			if (Math.random() < population.NEAT.mutateWeightsProb) {
+				this.mutateWeights(0.9, population.NEAT.mutationPower);
+			}
+			if(Math.random() < population.NEAT.renableProb) {
+				this.mutateRenable();
+			}
+			if(Math.random() < population.NEAT.toggleEnableProb) {
+				this.mutateToggleEnable(1);
+			}
+		}
+		return this;
 	}
 
 	/*
@@ -492,12 +508,37 @@ class Genome {
 	number of times, each time picking a random connection
 	*/
 	mutateToggleEnable(times) {
-
+		let rdmIndex = Math.floor(Math.random() * this.connectionG.length);
+		let connectionGene = this.connectionG[rdmIndex];
+		if (connectionGene.enabled === true) {
+			/*
+			check to see if connectionGene inNode has any other outgoing connections
+			if not then disabling this gene would result in a section of the network being usless
+			(prevents a node from not having an output, making it usless)
+			*/
+			for (let i = 0; i < this.connectionG.length; i++) {
+				let connection = this.connectionG[i];
+				if (connection.connection.inNode === connectionGene.connection.inNode &&
+					connection.enabled === true &&
+					connection.innov !== connectionGene.innov) {
+					connectionGene.enabled = false;
+					break;
+				}
+			}
+		} else connectionGene.enabled = true;
+		return this;
 	}
 
-	// finds a dissabled connection gene and renables it
+	// finds a the first disabled connection gene and renables it
 	mutateRenable() {
-
+		for (var i = 0; i < this.connectionG.length; i++) {
+			let connectionGene = this.connectionG[i];
+			if(connectionGene.enabled === false) {
+				connectionGene.enabled = true;
+				break;
+			}
+		}
+		return this;
 	}
 
 	/*
