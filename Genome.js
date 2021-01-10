@@ -330,14 +330,20 @@ class Genome {
 			while (!done) {
 				let innov = population.innovations[index];
 				if (index === population.innovations.length) {
+					// this is a new unique mutation
 					let weight = Math.random() * 2 - 1;
 					newConnectionGene = new ConnectionGene(node1, node2, weight, recurFlag, population.currInnov, true);
+					// record this mutation for the rest of the genomes to see
 					population.innovations.push(new Innovation(node1.id, node2.id, population.currInnov, weight, recurFlag))
 					done = true;
 				} else if (innov.type === innovTypes.NEWCONNECTION &&
 					innov.inNodeId === node1.id &&
 					innov.outNodeId === node2.id &&
 					innov.recur === recurFlag) {
+					/*
+					this mutation already happend, and will receive the same weight and innovation
+					as the mutation that already accured
+					*/
 					newConnectionGene = new ConnectionGene(node1, node2, innov.newWeight, recurFlag, innov.innovation, true);
 					done = true;
 				} else index++;
@@ -407,6 +413,7 @@ class Genome {
 		while (!done) {
 			let innov = population.innovations[index];
 			if (index === population.innovations.length) {
+				// this is a new unique mutation
 				newNodeGene = new NodeGene(population.currNodeId + 1, nodeTypes.NEURON, nodePlaces.HIDDEN);
 				if (recur) {
 					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, population.currInnov, true);
@@ -415,12 +422,14 @@ class Genome {
 					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, false, population.currInnov, true);
 					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, population.currInnov + 1, true);
 				}
+				// record this mutation for the rest of the geomes
 				population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, population.currInnov, population.currInnov + 1, population.currNodeId + 1, geneToSplit.innov));
 				done = true;
 			} else if (innov.type === innovTypes.NEWNODE &&
 				innov.inNodeId === inNodeGene.id &&
 				innov.outNodeId === outNodeGene.id &&
 				innov.oldInnov === geneToSplit.innov) {
+				// this mutation has already happend, and will recieve the same innovs and node id as the other mutation
 				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN);
 				if (recur) {
 					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, innov.innovation, true);
@@ -460,6 +469,7 @@ class Genome {
 			let perturbProb = 0;
 			let randomizeProb = 0;
 
+			// bias the tail end of the genome to stronger mutations
 			if(this.connectionG.length >= 10 && 1 > newGeneDropOff) {
 				perturbProb = 0.3;
 				randomizeProb = 0.1;
@@ -482,6 +492,7 @@ class Genome {
 	mutates the genome, combining all the mutate
 	methods to this one method, takes population for
 	inputs to mutate funcs (addNodeRate, addConnectionRate, rate, scale)
+	uses global NEAT settings for probability thresholds
 	*/
 	mutate(population) {
 		let rdm = Math.random();
@@ -602,7 +613,66 @@ class Genome {
 	whether they are in the same species.
 	*/
 	static compatibility(genome1, genome2, population) {
+		let disjointNum = 0;
+		let excessNum = 0;
+		let matchingNum = 0; // this is used to help cacluate the average weight diff
+		let weightDiffTotal = 0;
 
+		let largeGenomeSize = 0; // the larger of the two genomes
+
+		/*
+		get the larger of the two genomes, this is done for normalization purposes
+		NOTE: currently not using this, don't yet know when its neccessary to do so, 
+		I need to do more testing
+		*/
+		if (genome1.connectionG.length > genome2.connectionG.length) {
+			largeGenomeSize = genome1.connectionG.length;
+		} else {
+			largeGenomeSize = genome2.connectionG.length;
+		}
+
+		let geneIndex1 = 0;
+		let geneIndex2 = 0;
+
+		/*
+		compares the two genomes, stops till we are at the end of the larger genome,
+		calculates the disjointNum, excessNum, or matchingNum for NEAT compatibility func.
+		*/
+		while (geneIndex1 !== genome1.connectionG.length || geneIndex2 !== genome2.connectionG.length) {
+			let gene1 = genome1.connectionG[geneIndex1];
+			let gene2 = genome2.connectionG[geneIndex2];
+
+			// count this gene as excess if we are at the end of one of the genomes
+			if (!gene1) {
+				excessNum++;
+				geneIndex2++;
+			} else if (!gene2) {
+				excessNum++;
+				geneIndex1++;
+			} else {
+				/*
+				if the genes are the same, add to weightDiffTotal, and add to matching
+				if not count this gene as disjoint
+				*/
+				if (gene1.innov === gene2.innov) {
+					matchingNum++;
+					weightDiffTotal += Math.abs(gene1.connection.weight - gene2.connection.weight);
+					geneIndex1++;
+					geneIndex2++;
+				} else if (gene1.innov > gene2.innov) {
+					geneIndex2++;
+					disjointNum++;
+				} else if (gene2.innov > gene1.innov) {
+					geneIndex1++;
+					disjointNum++;
+				}
+			}
+		}
+
+		// for now just return unormalized compatibility, largeGenomeSize would replace the 1's to normalize it
+		return population.NEAT.disjointCoefficient * (disjointNum / 1) +
+			population.NEAT.excessCoefficient * (excessNum / 1) +
+			population.NEAT.weightDiffCoefficient * (weightDiffTotal / matchingNum);
 	}
 
 	/*
