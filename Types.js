@@ -1,9 +1,9 @@
 /*
 a node can be either a NEURON or a SENSOR
 a NEURON is a node with incomming connections
-for activation
+for activation (an output or hidden neuron)
 a SENSOR is a node that is given a value to output,
-(an input neuron)
+(an input or bias neuron)
 */
 let nodeTypes = {
 	NEURON: 0,
