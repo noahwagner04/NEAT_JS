@@ -4,7 +4,7 @@ responsible for creating the
 network, mutations, and crossover
 */
 class Genome {
-	constructor(inNum, outNum, recur, maxHidden, nodeActivation, evolveActivation) {
+	constructor(inNum, outNum) {
 		if (arguments.length === 1 && arguments[0] instanceof Genome) { // check to see if we only recieve a genome, if so, exicute copy constructor
 			let genome = arguments[0];
 			this.nodeG = genome.copyNodeG();			 // a list of copied node genes from genome
@@ -13,15 +13,9 @@ class Genome {
 			this.inNum = genome.inNum;	 // the number of in node genes this genome copied from genome
 			this.outNum = genome.outNum; // the number of out node genes this genome copied from genome
 
-			this.recur = genome.recur; 		   // whether or not to allow for reccurent connections copied from genome
-			this.maxHidden = genome.maxHidden; // the max hidden nodes that this genome can evolve copied from genome
-
-			this.nodeActivation = genome.nodeActivation; 		 // what activation function to use for the nodes copied from genome
-			this.randomNodeActivation = genome.evolveActivation; // whether or not we should randomly choose an activation per node copied from genome
-
 			this.phenotype = undefined;
 
-		} else if(arguments.length === 2){ // check to see if we recieve nodeG and connectionG, if so, build genome off of those two arrays
+		} else if(false){ // check to see if we recieve nodeG and connectionG, if so, build genome off of those two arrays
 
 		} else { // do the first gen constructor
 			this.nodeG = [];		// a list of all node genes in this genome
@@ -29,12 +23,6 @@ class Genome {
 
 			this.inNum = inNum;	  	// the number of in node genes this genome will have
 			this.outNum = outNum; 	// the number of out node genes this genome will have
-
-			this.recur = recur; 		// whether or not to allow for reccurent connections
-			this.maxHidden = maxHidden; // the max hidden nodes that this genome can evolve
-
-			this.nodeActivation = nodeActivation; 		  // what activation function to use for the nodes
-			this.randomNodeActivation = evolveActivation; // whether or not we should randomly choose an activation per node
 
 			this.phenotype = undefined;
 
@@ -146,9 +134,11 @@ class Genome {
 
 	/*
 	creates a network from the node genes and 
-	connection genes
+	connection genes, a population reference is used
+	to accesss the activation function the user defines
+	in NEAT config obj
 	*/
-	constructNetwork() {
+	constructNetwork(population) {
 		let inputs = [];
 		let outputs = [];
 		let all = [];
@@ -160,7 +150,7 @@ class Genome {
 		adds it to the apropiate array, input, output, or all
 		*/
 		this.nodeG.forEach(nodeGene => {
-			let activationFunc = this.randomNodeActivation ? Genome.chooseActivationFunc() : this.nodeActivation;
+			let activationFunc = population.NEAT.randomActivation ? Genome.chooseActivationFunc() : population.NEAT.activationFunction;
 			let node = nodeGene.createNetNode(activationFunc).netNode;
 			if (nodeGene.ntype === nodeTypes.SENSOR) inputs.push(node);
 			else if (nodeGene.placement === nodePlaces.OUTPUT) outputs.push(node);
@@ -232,7 +222,7 @@ class Genome {
 		this is done to update the phenotype to make 
 		the Network.checkRecur func work
 		*/
-		this.constructNetwork();
+		this.constructNetwork(population);
 
 		// run until a certain amount of attempts
 		while (tryCount <= tries) {
