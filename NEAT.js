@@ -22,6 +22,7 @@ class NEAT {
 
 
 		this.popSize = config.populationSize;
+		this.forgetInnovs = config.forgetInnovs;
 
 		this.inputs = config.network.inputs;
 		this.outputs = config.network.outputs;
