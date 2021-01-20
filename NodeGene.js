@@ -16,9 +16,15 @@ class NodeGene {
 		}
 	}
 
-	// creates a node with a given activation func
-	createNetNode(func) {
-		this.netNode = new Node(this.id, this.ntype, this.placement, func);
+	/*
+	creates a node with a given activation func,
+	takes population obj to get activation func
+	*/
+	createNetNode(population) {
+		let activationFunc = undefined;
+		if(population.NEAT.randomActivation) activationFunc = NodeGene.chooseActivationFunc;
+		else activationFunc = population.NEAT.activationFunction;
+		this.netNode = new Node(this.id, this.ntype, this.placement, activationFunc);
 		return this;
 	}
 
@@ -28,5 +34,17 @@ class NodeGene {
 		let newNodeGene = new NodeGene(this);
 		this.duplicate = newNodeGene;
 		return newNodeGene;
+	}
+
+	/*
+	chooses from the activationTypes array,
+	which has the six default activation functions
+	in it, the user can add their own functions to the
+	array and this function will have no problem with 
+	ranomly picking it
+	*/
+	static chooseActivationFunc() {
+		let rdmIndex = Math.floor(Math.random() * activationTypes.length);
+		return activationTypes[rdmIndex];
 	}
 }
