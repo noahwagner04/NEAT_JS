@@ -5,7 +5,7 @@ inovation num
 */
 class Innovation {
 	constructor(inNodeId, outNodeId, innov1, ...args) {
-		if (args.length === 3) { 		// run node constructor
+		if (args.length === 4) { 		// run node constructor
 			this.inNodeId = inNodeId;
 			this.outNodeId = outNodeId;
 
@@ -14,6 +14,8 @@ class Innovation {
 
 			this.nodeId = args[1];	    // new id of node, only used if this is a node mutation
 			this.oldInnov = args[2];    // only used if node mutation, innov number of the connection this node is splitting
+
+			this.activation = args[3];  // activation of the node, only necessary if node activation is randomized
 
 			this.type = innovTypes.NEWNODE;
 
