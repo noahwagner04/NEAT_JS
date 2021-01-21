@@ -4,7 +4,7 @@ responsible for creating the
 network, mutations, and crossover
 */
 class Genome {
-	constructor(inNum, outNum) {
+	constructor(inNum, outNum, population) {
 		if (arguments.length === 1 && arguments[0] instanceof Genome) { // check to see if we only recieve a genome, if so, exicute copy constructor
 			let genome = arguments[0];
 			this.nodeG = genome.copyNodeG();			 // a list of copied node genes from genome
@@ -12,6 +12,8 @@ class Genome {
 
 			this.inNum = genome.inNum;	 // the number of in node genes this genome copied from genome
 			this.outNum = genome.outNum; // the number of out node genes this genome copied from genome
+
+			this.population = genome.population;
 
 			this.phenotype = undefined;
 
@@ -25,6 +27,8 @@ class Genome {
 			this.outNum = outNum; 	// the number of out node genes this genome will have
 
 			this.phenotype = undefined;
+
+			this.population = population;
 
 			this.init(); // initializes the genome, gets overriden when this genome is a copy of another
 		}
@@ -100,8 +104,8 @@ class Genome {
 		*/
 		for (let i = 0; i < this.inNum; i++) {
 			let currentNodeG = undefined;
-			if (i > 0) currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.INPUT);
-			else currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.BIAS);
+			if (i > 0) currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.INPUT, Activation.linearActivation);
+			else currentNodeG = new NodeGene(i, nodeTypes.SENSOR, nodePlaces.BIAS, Activation.linearActivation);
 			this.nodeG.push(currentNodeG);
 			id++;
 		}
@@ -111,7 +115,7 @@ class Genome {
 		id of the nodes starting at a given id
 		*/
 		for (let i = id; i < this.outNum + id; i++) {
-			let currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT);
+			let currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT, this.chooseActivationFunc());
 			this.nodeG.push(currentNodeG);
 		}
 
@@ -138,7 +142,7 @@ class Genome {
 	to accesss the activation function the user defines
 	in NEAT config obj
 	*/
-	constructNetwork(population) {
+	constructNetwork() {
 		let inputs = [];
 		let outputs = [];
 		let all = [];
@@ -150,8 +154,7 @@ class Genome {
 		adds it to the apropiate array, input, output, or all
 		*/
 		this.nodeG.forEach(nodeGene => {
-			let activationFunc = population.NEAT.randomActivation ? Genome.chooseActivationFunc() : population.NEAT.activationFunction;
-			let node = nodeGene.createNetNode(activationFunc).netNode;
+			let node = nodeGene.createNetNode().netNode;
 			if (nodeGene.ntype === nodeTypes.SENSOR) inputs.push(node);
 			else if (nodeGene.placement === nodePlaces.OUTPUT) outputs.push(node);
 			all.push(node);
@@ -190,7 +193,7 @@ class Genome {
 	takes in population to access innovs and
 	currInnov
 	*/
-	mutateAddConnection(tries, population) {
+	mutateAddConnection(tries) {
 		let newConnectionGene = undefined;
 		let node1 = undefined;
 		let node2 = undefined;
@@ -203,7 +206,7 @@ class Genome {
 		let found = false;
 
 		//decide whether or not to make this link recurent
-		if (Math.random() < population.NEAT.recurProb) {
+		if (Math.random() < this.population.NEAT.recurProb) {
 			doRecur = true;
 		}
 
@@ -222,7 +225,7 @@ class Genome {
 		this is done to update the phenotype to make 
 		the Network.checkRecur func work
 		*/
-		this.constructNetwork(population);
+		this.constructNetwork();
 
 		// run until a certain amount of attempts
 		while (tryCount <= tries) {
@@ -318,13 +321,13 @@ class Genome {
 			let done = false;
 			let index = 0;
 			while (!done) {
-				let innov = population.innovations[index];
-				if (index === population.innovations.length) {
+				let innov = this.population.innovations[index];
+				if (index === this.population.innovations.length) {
 					// this is a new unique mutation
 					let weight = Math.random() * 2 - 1;
-					newConnectionGene = new ConnectionGene(node1, node2, weight, recurFlag, population.currInnov, true);
+					newConnectionGene = new ConnectionGene(node1, node2, weight, recurFlag, this.population.currInnov, true);
 					// record this mutation for the rest of the genomes to see
-					population.innovations.push(new Innovation(node1.id, node2.id, population.currInnov, weight, recurFlag))
+					this.population.innovations.push(new Innovation(node1.id, node2.id, this.population.currInnov, weight, recurFlag))
 					done = true;
 				} else if (innov.type === innovTypes.NEWCONNECTION &&
 					innov.inNodeId === node1.id &&
@@ -339,7 +342,7 @@ class Genome {
 				} else index++;
 			}
 
-			population.currInnov++;
+			this.population.currInnov++;
 			this.addGene(newConnectionGene); // add the gene to the correct place
 			return this;
 		}
@@ -354,7 +357,7 @@ class Genome {
 	originally split) takes in population to access innovs array, currNodeId
 	and currInnov
 	*/
-	mutateAddNode(population) {
+	mutateAddNode() {
 		let geneToSplit = undefined;
 		let newGene1 = undefined;
 		let newGene2 = undefined;
@@ -401,26 +404,31 @@ class Genome {
 		let done = false;
 		let index = 0;
 		while (!done) {
-			let innov = population.innovations[index];
-			if (index === population.innovations.length) {
+			let innov = this.population.innovations[index];
+			if (index === this.population.innovations.length) {
 				// this is a new unique mutation
-				newNodeGene = new NodeGene(population.currNodeId + 1, nodeTypes.NEURON, nodePlaces.HIDDEN);
+				let nodeActivation = this.chooseActivationFunc();
+				newNodeGene = new NodeGene(this.population.currNodeId + 1, nodeTypes.NEURON, nodePlaces.HIDDEN, nodeActivation);
 				if (recur) {
-					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, population.currInnov, true);
-					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, population.currInnov + 1, true);
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, this.population.currInnov, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, this.population.currInnov + 1, true);
 				} else {
-					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, false, population.currInnov, true);
-					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, population.currInnov + 1, true);
+					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, false, this.population.currInnov, true);
+					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, this.population.currInnov + 1, true);
 				}
 				// record this mutation for the rest of the geomes
-				population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, population.currInnov, population.currInnov + 1, population.currNodeId + 1, geneToSplit.innov));
+				this.population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, this.population.currInnov, this.population.currInnov + 1, this.population.currNodeId + 1, geneToSplit.innov, nodeActivation));
+				
+				this.population.currInnov += 2;
+				this.population.currNodeId += 1;
+
 				done = true;
 			} else if (innov.type === innovTypes.NEWNODE &&
 				innov.inNodeId === inNodeGene.id &&
 				innov.outNodeId === outNodeGene.id &&
 				innov.oldInnov === geneToSplit.innov) {
 				// this mutation has already happend, and will recieve the same innovs and node id as the other mutation
-				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN);
+				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN, innov.activation);
 				if (recur) {
 					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, innov.innovation, true);
 					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, innov.innovation2, true);
@@ -431,9 +439,6 @@ class Genome {
 				done = true;
 			} else index++;
 		}
-
-		population.currInnov += 2;
-		population.currNodeId += 1;
 
 		/*
 		add the new genes and nodes to the
@@ -484,20 +489,19 @@ class Genome {
 	inputs to mutate funcs (addNodeRate, addConnectionRate, rate, scale)
 	uses global NEAT settings for probability thresholds
 	*/
-	mutate(population) {
-		let rdm = Math.random();
-		if (rdm < population.NEAT.mutateNodeProb) {
-			this.mutateAddNode(population);
-		} else if (rdm < population.NEAT.mutateConnectionProb) {
-			this.mutateAddConnection(20, population);
+	mutate() {
+		if (Math.random() < this.population.NEAT.mutateNodeProb) {
+			this.mutateAddNode();
+		} else if (Math.random() < this.population.NEAT.mutateConnectionProb) {
+			this.mutateAddConnection(20);
 		} else {
-			if (Math.random() < population.NEAT.mutateWeightsProb) {
-				this.mutateWeights(0.9, population.NEAT.mutationPower);
+			if (Math.random() < this.population.NEAT.mutateWeightsProb) {
+				this.mutateWeights(0.9, this.population.NEAT.mutationPower);
 			}
-			if(Math.random() < population.NEAT.renableProb) {
+			if(Math.random() < this.population.NEAT.renableProb) {
 				this.mutateRenable();
 			}
-			if(Math.random() < population.NEAT.toggleEnableProb) {
+			if(Math.random() < this.population.NEAT.toggleEnableProb) {
 				this.mutateToggleEnable(1);
 			}
 		}
@@ -591,8 +595,124 @@ class Genome {
 	competeing conventions solution returns a new
 	genome
 	*/
-	static crossover(genome1, genome2, fit1, fit2) {
+	static crossover(genome1, genome2, fit1, fit2, population) {
+		let index1 = 0;
+		let index2 = 0;
+		let chosenGene = undefined;
+		let skip = false;
+		let p1IsBetter = false;
+		let enabled = false;
+		let newConnectionG = [];
+		let avgWeight = undefined;
+		let newNodeG = [];
 
+		for (let i = 0; i < genome1.nodeG.length; i++) {
+			let node = genome1.nodeG[i];
+			if (node.placement === nodePlaces.INPUT ||
+				node.placement === nodePlaces.BIAS ||
+				node.placement === nodePlaces.OUTPUT) {
+				newNodeG.push(new NodeGene(node.id, node.ntype, node.placement, node.netNodeActivation));
+			}
+		}
+
+		/*
+		find out who is the better genome, if they have equal fitness,
+		call the smaller genome better
+		*/
+		if(fit1 === fit2) {
+			if(genome1.connectionG.length > genome2.connectionG.length) {
+				p1IsBetter = false;
+			} else p1IsBetter = true;
+		} else if(fit1 > fit2) { 
+			p1IsBetter = true; 
+		} else {
+			p1IsBetter = false;
+		}
+
+		// go till we reach the end of both gene arrays
+		while (index1 <= genome1.connectionG.length || index2 <= genome2.connectionG.length) {
+
+			skip = false;
+
+			let gene1 = genome1.connectionG[index1];
+			let gene2 = genome2.connectionG[index2];
+
+			/*
+			if we are at the end of one of the gene arrays, 
+			count this as an excess gene by skipping it if 
+			the other gene has a better fit
+			*/
+			if (!gene1) {
+				chosenGene = gene2;
+				index2++;
+				if (p1IsBetter) skip = true;
+			} else if (!gene2) {
+				chosenGene = gene1;
+				index1++;
+				if (!p1IsBetter) skip = true;
+			} else {
+				// if they are the same connection
+				if (gene1.innov === gene2.innov) {
+					// average their weights if passed threshold
+					if(Math.random() < population.NEAT.mateAvgProb) {
+						// NOTE: pick nodes from each parent randomly because of the unique activation feature (like how kenneth does it)
+						avgWeight = gene1.connection.weight + gene2.connection.weight / 2;
+					}else {
+						// pick one randomly
+						if (Math.random() > 0.5) {
+							chosenGene = gene1;
+						} else {
+							chosenGene = gene2;
+						}
+					}
+					// small chance that this gene will be enabled if either gene was disabled
+					if (gene1.enabled === false || gene2.enabled === false) {
+						if (Math.random() > 0.75) {
+							enabled = true;
+						}
+					}
+
+					index1++;
+					index2++;
+				} 
+				// disjoint case, will only be included if gene1 is better
+				else if (gene1.innov > gene2.innov) {
+					chosenGene = gene2;
+					if (p1IsBetter) skip = true;
+					index2++;
+				} 
+				// disjoin case, will only be included if gene2 is better
+				else if (gene2.innov > gene1.innov) {
+					chosenGene = gene1;
+					if (!p1IsBetter) skip = true;
+				}
+			}
+
+			/*
+			checks if the chosen gene conflicts with an already chosen 
+			gene. e.g. if the they represent the same connection
+			this can occur if the one of the genes was created in a different generation
+			than the other, therefore recieving a different innov numbers even if it was the
+			same structural mutation. 
+			another e.g., if node1 has a recurrent connection that leads to node2, who also 
+			has a recurrent connection leading back to node1
+			*/
+			for (let i = 0; i < newConnectionG.length; i++) {
+				let currConnection = newConnectionG[i].connection;
+				let chosenConnection = chosenGene.connection;
+				if ((currConnection.inNode === chosenConnection.inNode &&
+						currConnection.outNode === chosenConnection.outNode &&
+						currConnection.isRecur === chosenConnection.isRecur) ||
+					(currConnection.inNode === chosenConnection.outNode &&
+						currConnection.outNode === chosenConnection.inNode &&
+						currConnection.isRecur && chosenConnection.isRecur)) {
+					skip = true;
+					return;
+				}
+			}
+
+			// NOTE: not done
+		}
 	}
 
 	/*
@@ -672,8 +792,12 @@ class Genome {
 	array and this function will have no problem with 
 	ranomly picking it
 	*/
-	static chooseActivationFunc() {
-		let rdmIndex = Math.floor(Math.random() * activationTypes.length);
-		return activationTypes[rdmIndex];
+	chooseActivationFunc() {
+		if (this.population.NEAT.randomActivation) {
+			let rdmIndex = Math.floor(Math.random() * activationTypes.length);
+			return activationTypes[rdmIndex];
+		} else {
+			return this.population.NEAT.activationFunction;
+		}
 	}
 }
