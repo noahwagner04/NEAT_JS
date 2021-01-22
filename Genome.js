@@ -17,7 +17,13 @@ class Genome {
 
 			this.phenotype = undefined;
 
-		} else if(false){ // check to see if we recieve nodeG and connectionG, if so, build genome off of those two arrays
+		} else if(Array.isArray(inNum) && Array.isArray(outNum)){ // check to see if we recieve nodeG and connectionG, if so, build genome off of those two arrays
+			this.nodeG = outNum;
+			this.connectionG = inNum;
+
+			this.phenotype = undefined;
+
+			this.population = population;
 
 		} else { // do the first gen constructor
 			this.nodeG = [];		// a list of all node genes in this genome
@@ -418,7 +424,7 @@ class Genome {
 				}
 				// record this mutation for the rest of the geomes
 				this.population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, this.population.currInnov, this.population.currInnov + 1, this.population.currNodeId + 1, geneToSplit.innov, nodeActivation));
-				
+
 				this.population.currInnov += 2;
 				this.population.currNodeId += 1;
 
@@ -595,16 +601,24 @@ class Genome {
 	competeing conventions solution returns a new
 	genome
 	*/
-	static crossover(genome1, genome2, fit1, fit2, population) {
+	static crossover(genome1, genome2, fit1, fit2, interspeciesFlag, population) {
 		let index1 = 0;
 		let index2 = 0;
 		let chosenGene = undefined;
 		let skip = false;
 		let p1IsBetter = false;
-		let enabled = false;
+		let enabled = true;
 		let newConnectionG = [];
-		let avgWeight = undefined;
 		let newNodeG = [];
+		// only for average crossover
+		let avgCrossover = false;
+		let avgWeight = undefined;
+		let avgGene = undefined;
+
+		// first decide if we are going to do random or avg crossover
+		if(Math.random() < population.NEAT.mateAvgProb) {
+			avgCrossover = true;
+		}
 
 		for (let i = 0; i < genome1.nodeG.length; i++) {
 			let node = genome1.nodeG[i];
@@ -630,7 +644,7 @@ class Genome {
 		}
 
 		// go till we reach the end of both gene arrays
-		while (index1 <= genome1.connectionG.length || index2 <= genome2.connectionG.length) {
+		while (index1 < genome1.connectionG.length || index2 < genome2.connectionG.length) {
 
 			skip = false;
 
@@ -654,9 +668,15 @@ class Genome {
 				// if they are the same connection
 				if (gene1.innov === gene2.innov) {
 					// average their weights if passed threshold
-					if(Math.random() < population.NEAT.mateAvgProb) {
-						// NOTE: pick nodes from each parent randomly because of the unique activation feature (like how kenneth does it)
+					if(avgCrossover) {
+						// pick nodes from each parent randomly
+						let avgInNode = Math.random() > 0.5 ? gene1.connection.inNode : gene2.connection.inNode;
+						let avgOutNode = Math.random() > 0.5 ? gene1.connection.outNode : gene2.connection.outNode;
+						let avgRecur = Math.random() > 0.5 ? gene1.connection.isRecur : gene2.connection.isRecur;
 						avgWeight = gene1.connection.weight + gene2.connection.weight / 2;
+
+						avgGene = new ConnectionGene(avgInNode, avgOutNode, avgWeight, avgRecur, gene1.innov, true);
+						chosenGene = avgGene;
 					}else {
 						// pick one randomly
 						if (Math.random() > 0.5) {
@@ -667,8 +687,8 @@ class Genome {
 					}
 					// small chance that this gene will be enabled if either gene was disabled
 					if (gene1.enabled === false || gene2.enabled === false) {
-						if (Math.random() > 0.75) {
-							enabled = true;
+						if (Math.random() < 0.75) {
+							enabled = false;
 						}
 					}
 
@@ -685,7 +705,20 @@ class Genome {
 				else if (gene2.innov > gene1.innov) {
 					chosenGene = gene1;
 					if (!p1IsBetter) skip = true;
+					index1++;
 				}
+			}
+
+			/*
+			NOTE: possibly a parameter population.NEAT.fastGrowthRate?? 
+			it would make skip always false, so it awlays includs all genes,
+			also don't know if the check below should exist, im going off the
+			original pdf paper, and it says to make interspecies mating to 
+			allow all genes, so im going to leave it for now
+			*/
+			// if this is an interspecies breed, let all genes through
+			if(interspeciesFlag) {
+				skip = false;
 			}
 
 			/*
@@ -711,8 +744,40 @@ class Genome {
 				}
 			}
 
-			// NOTE: not done
+			if(!skip) {
+				let inNode = chosenGene.connection.inNode;
+				let outNode = chosenGene.connection.outNode;
+
+				let newInNode = undefined;
+				let newOutNode = undefined;
+
+				// check to see if the node has already been made
+				let inMatch = newNodeG.find(node => node.id === inNode.id);
+				let outMatch = newNodeG.find(node => node.id === outNode.id);
+
+				// if matched, then get that node ref
+				if(inMatch) {
+					newInNode = inMatch;
+				} else {
+					// if not found, then make a new node and add it to the newNodeG array
+					newInNode = new NodeGene(inNode.id, inNode.ntype, inNode.placement, inNode.netNodeActivation);
+					newNodeG.push(newInNode);
+				}
+				// if matched, then get that node ref
+				if(outMatch) {
+					newOutNode = outMatch;
+				} else {
+					// if not found, then make a new node and add it to the newNodeG array
+					newOutNode = new NodeGene(outNode.id, outNode.ntype, outNode.placement, outNode.netNodeActivation);
+					newNodeG.push(newOutNode);					
+				}
+				// sort the nodes from id's ascending
+				newNodeG.sort((a, b) => a - b);
+				let newConnectionGene = new ConnectionGene(newInNode, newOutNode, chosenGene.connection.weight, chosenGene.connection.isRecur, chosenGene.innov, enabled);
+				newConnectionG.push(newConnectionGene);
+			}
 		}
+		return new Genome(newConnectionG, newNodeG, population);
 	}
 
 	/*
