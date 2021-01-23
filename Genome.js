@@ -688,7 +688,6 @@ class Genome {
 					}
 					// small chance that this gene will be enabled if either gene was disabled
 					if (gene1.enabled === false || gene2.enabled === false) {
-						console.log(gene1.enabled, gene2.enabled, index1, index2);
 						if (Math.random() < 0.75) {
 							enabled = false;
 						}
