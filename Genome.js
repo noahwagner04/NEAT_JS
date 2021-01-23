@@ -646,6 +646,7 @@ class Genome {
 		// go till we reach the end of both gene arrays
 		while (index1 < genome1.connectionG.length || index2 < genome2.connectionG.length) {
 
+			enabled = true;
 			skip = false;
 
 			let gene1 = genome1.connectionG[index1];
@@ -687,6 +688,7 @@ class Genome {
 					}
 					// small chance that this gene will be enabled if either gene was disabled
 					if (gene1.enabled === false || gene2.enabled === false) {
+						console.log(gene1.enabled, gene2.enabled, index1, index2);
 						if (Math.random() < 0.75) {
 							enabled = false;
 						}
