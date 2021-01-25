@@ -121,7 +121,12 @@ class Genome {
 		id of the nodes starting at a given id
 		*/
 		for (let i = id; i < this.outNum + id; i++) {
-			let currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT, this.chooseActivationFunc());
+			let currentNodeG = undefined;
+			if(this.population.NEAT.randomActivation) {
+				currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT, Activation.sigmoid);
+			} else {
+				currentNodeG = new NodeGene(i, nodeTypes.NEURON, nodePlaces.OUTPUT, this.population.NEAT.activationFunction);
+			}
 			this.nodeG.push(currentNodeG);
 		}
 
