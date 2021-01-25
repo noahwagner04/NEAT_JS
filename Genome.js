@@ -428,7 +428,7 @@ class Genome {
 					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, this.population.currInnov + 1, true);
 				}
 				// record this mutation for the rest of the geomes
-				this.population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, this.population.currInnov, this.population.currInnov + 1, this.population.currNodeId + 1, geneToSplit.innov, nodeActivation));
+				this.population.innovations.push(new Innovation(inNodeGene.id, outNodeGene.id, this.population.currInnov, this.population.currInnov + 1, this.population.currNodeId + 1, geneToSplit.innov));
 
 				this.population.currInnov += 2;
 				this.population.currNodeId += 1;
@@ -439,7 +439,7 @@ class Genome {
 				innov.outNodeId === outNodeGene.id &&
 				innov.oldInnov === geneToSplit.innov) {
 				// this mutation has already happend, and will recieve the same innovs and node id as the other mutation
-				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN, innov.activation);
+				newNodeGene = new NodeGene(innov.nodeId, nodeTypes.NEURON, nodePlaces.HIDDEN, this.chooseActivationFunc());
 				if (recur) {
 					newGene1 = new ConnectionGene(inNodeGene, newNodeGene, 1, true, innov.innovation, true);
 					newGene2 = new ConnectionGene(newNodeGene, outNodeGene, oldWeight, false, innov.innovation2, true);
