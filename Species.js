@@ -66,7 +66,8 @@ class Species {
 	}
 
 	// checks if an organism can be added to this species
+	// compares it with the first organism in the organisms array
 	checkCompatibility(organism) {
-		
+
 	}
 }
