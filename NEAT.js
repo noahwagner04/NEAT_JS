@@ -12,6 +12,7 @@ class NEAT {
 
 		this.mutationPower = config.mating.mutationPower;
 		this.mutateOnlyProb = config.mating.mutateOnlyProb;
+		this.mateOnlyProb = config.mating.mutateOnlyProb;
 		this.recurProb = config.mating.recurProb;
 		this.mutateWeightsProb = config.mating.mutateWeightsProb;
 		this.mutateNodeProb = config.mating.addNodeProb;
