@@ -7,8 +7,8 @@ class Organism {
 		this.genome = genome; // the genotype
 		this.network = genome.constructNetwork().phenotype; // the phenotype
 
-		this.fitness = fitness; 		// the adjusted fitness of this organism
-		this.originalFitness = fitness; // the original unadjusted fitness of this organism
+		this.adjustedFit = fitness; 	// the adjusted fitness of this organism
+		this.fitness = fitness; 		// the original unadjusted fitness of this organism
 
 		this.winner = false; 			// if this organism preforms best in the pop
 		this.species = undefined; 		// the species this organism belongs to
