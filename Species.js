@@ -21,7 +21,8 @@ class Species {
 
 	// adds an organism to this species (probably adds to the reproductivePool idk yet)
 	addOrganism(organism) {
-
+		this.reproductivePool.push(organism);
+		return this;
 	}
 
 	/*
@@ -29,36 +30,82 @@ class Species {
 	to acount for the size of this species
 	*/
 	adjustFitness() {
-
+		this.organisms.forEach(organism => {
+			organism.adjustedFit = organism.fitness / this.organisms.length;
+		});
+		return this;
 	}
 
 	// calculates the average unadjusted fitness of all organisms
 	calcAverageFit() {
-
+		let result = 0;
+		this.organisms.forEach(organism => {
+			result += organism.fitness;
+		});
+		result /= this.organisms.length;
+		this.aveFitness = result;
+		return this;
 	}
 
 	// returns the largest fitness in this species
 	getMaxFit() {
-
+		this.organisms.forEach(organism => {
+			if(organism.fitness > this.maxFitness) {
+				this.maxFitness = organism.fitness;
+				if(organism.fitness > this.maxFitnessEver) {
+					this.maxFitnessEver = organism.fitness;
+				}
+			}
+		});
+		return this;
 	}
 
-	// returns the amount of offspring this species is allows to reproduce
+	/*
+	caclulates the number of babies this species will create for next gen (expectedOffspring),
+	this number will most likely not be whole, population takes care of distributing the sum of all fractional 
+	remainders species expectedOffprings to well performing species
+	*/
 	countOffspring() {
+		let totalAvgFit = 0;
+		let offspringNum = 0;
 
+		for (var i = 0; i < this.population.species.length; i++) {
+			let species = this.population.species[i];
+			totalAvgFit += species.aveFitness;
+		}
+
+		offspringNum = this.aveFitness / totalAvgFit * this.population.size;
+		this.expectedOffspring = Math.trunc(offspringNum);
+		return this;
 	}
 
 	// removes a specified organism from this species
 	removeOrganism(organism) {
-
+		for (let i = 0; i < this.organisms.length; i++) {
+			if(organism === this.organisms[i]) {
+				this.organisms.splice(i, 1);
+			}
+		}
+		return this;
 	}
 
 	// returns the best preforming organism
 	getChamp() {
-
+		this.rank();
+		return this.organisms[0];
 	}
 
 	// creates the next species gen
 	reproduce(gen, sortedSpecies) {
+
+		/*
+		population first takes care of the fractional parts of expectedOffspring and disributes it
+		to well preforming species (just subtracts total pop size with the sum of all species expectedOffsprings (thats the remainder),
+		if its > 0 that means we have to add (popsize - sumOfExpecedOffsprings) babies to well performing species,
+		else if <= 0 then do nothing)
+		*/
+
+		// first delete prooly preforming organisms (depends of survival threshhold) from this organisms array and main organism array
 
 		// loop for expectedOffspring amount of times
 
@@ -73,22 +120,25 @@ class Species {
 			// then speciate the new baby (into reproductive pools)
 
 		/*
-		population takes care of deleting poorly preforming organisms
-
 		population then takes care of making all species organisms array update to the next gen (by making it equal to their reproducive pools)
 		then it also takes care of updating the main organism array by stringing the new species arrays together.
-		*/
 
+		population also takes care of poorly performing species (delets them if not improved over specified num of gens)
+		*/
 	}
 
 	// sorts the organisms from greatest to least fit
 	rank() {
-
+		this.organisms.sort((a, b) => b.fitness - a.fitness);
+		return this;
 	}
 
 	// checks if an organism can be added to this species
 	// compares it with the first organism in the organisms array
 	checkCompatibility(organism) {
-
+		if(Genome.compatibility(organism.genome, this.organisms[0].genome, this.population) < this.population.NEAT.compatibilityThresh) {
+			return true;
+		}
+		return false;
 	}
 }
