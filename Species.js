@@ -98,28 +98,39 @@ class Species {
 	// creates the next species gen
 	reproduce(gen) {
 
+
 		/*
+		POPULATIONS JOB
+		----------------
 		population first takes care of the fractional parts of expectedOffspring and disributes it
 		to well preforming species (just subtracts total pop size with the sum of all species expectedOffsprings (thats the remainder),
 		if its > 0 that means we have to add (popsize - sumOfExpecedOffsprings) babies to well performing species,
 		else if <= 0 then do nothing)
+
+		if all population doesn't increase its maxFitness, only allow the top two species to breed and eliminate the rest
 		*/
 
-		// first delete prooly preforming organisms (depends of survival threshhold) from this organisms array and main organism array
+		/*
+		THIS FUNCTIONS JOB (SPECIES JOB)
+		---------------------------------
+		first delete prooly preforming organisms (depends of survival threshhold) from this organisms array and main organism array
 
-		// loop for expectedOffspring amount of times
+		loop for expectedOffspring amount of times
 
-			// then do superchamp checks and clone champ
+			then do superchamp checks and clone champ
 
-			// decide weather to only mutate, otherwise just mate then decide if to mutate
+			decide weather to only mutate, otherwise just mate then decide if to mutate
 
-				// if only mutate, mutate then be done
+				if only mutate, mutate then be done
 
-				// if mate, pick each parent, biasing towards better preforming organisms
+				if mate, pick each parent, biasing towards better preforming organisms
 
-			// then speciate the new baby (into reproductive pools)
+			then speciate the new baby (into reproductive pools)
+		*/
 
 		/*
+		POPULATIONS JOB
+		---------------
 		population then takes care of making all species organisms array update to the next gen (by making it equal to their reproducive pools)
 		then it also takes care of updating the main organism array by stringing the new species arrays together.
 
