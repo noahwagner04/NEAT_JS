@@ -75,7 +75,7 @@ class Species {
 		}
 
 		offspringNum = this.aveFitness / totalAvgFit * this.population.size;
-		this.expectedOffspring = Math.trunc(offspringNum);
+		this.expectedOffspring = offspringNum < 0 ? 0 : Math.trunc(offspringNum);
 		return this;
 	}
 
