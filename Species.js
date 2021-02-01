@@ -96,7 +96,7 @@ class Species {
 	}
 
 	// creates the next species gen
-	reproduce(gen, sortedSpecies) {
+	reproduce(gen) {
 
 		/*
 		population first takes care of the fractional parts of expectedOffspring and disributes it
