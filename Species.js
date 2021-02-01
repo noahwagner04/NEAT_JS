@@ -123,7 +123,7 @@ class Species {
 		population then takes care of making all species organisms array update to the next gen (by making it equal to their reproducive pools)
 		then it also takes care of updating the main organism array by stringing the new species arrays together.
 
-		population also takes care of poorly performing species (delets them if not improved over specified num of gens)
+		population also takes care of poorly performing species (delets them if not improved over specified num of generations)
 		*/
 	}
 
