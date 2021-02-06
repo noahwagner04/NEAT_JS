@@ -1,6 +1,6 @@
 class Population {
 	constructor(genome, size, NEAT) {
-		this.genomes = [];
+		this.organisms = [];
 		this.first = genome;
 		this.size = size;
 		this.species = [];
