@@ -15,6 +15,7 @@ class Species {
 		this.organisms = [];
 		this.reproductivePool = [];
 		this.lastImprovedAtAge = 0;
+		this.champ = undefined;
 
 		this.population = population;
 	}
@@ -69,7 +70,7 @@ class Species {
 		let totalAvgFit = 0;
 		let offspringNum = 0;
 
-		for (var i = 0; i < this.population.species.length; i++) {
+		for (let i = 0; i < this.population.species.length; i++) {
 			let species = this.population.species[i];
 			totalAvgFit += species.aveFitness;
 		}
@@ -89,44 +90,101 @@ class Species {
 		return this;
 	}
 
-	// returns the best preforming organism
+	// returns the best preforming organism (assumes species has been ranked)
 	getChamp() {
-		this.rank();
-		return this.organisms[0];
+		this.champ = this.organisms[0];
+		return this;
 	}
 
 	// creates the next species gen
 	reproduce(gen) {
-
+		let champDone = false;
+		let mom = undefined;
+		let dad = undefined;
+		let baby = undefined;
+		let newGenome = undefined;
+		let interspeciesFlag = undefined;
 
 		/*
 		POPULATIONS JOB
 		----------------
+
+		organizes species array from best preforming to worst
+
+		counts offspring for all species, calculates maxFit, averageFit, also takes care of ranking / setting champ of each species
+		
+		adds one the the age of every species 
+
 		population first takes care of the fractional parts of expectedOffspring and disributes it
 		to well preforming species (just subtracts total pop size with the sum of all species expectedOffsprings (thats the remainder),
 		if its > 0 that means we have to add (popsize - sumOfExpecedOffsprings) babies to well performing species,
 		else if <= 0 then do nothing)
 
-		if all population doesn't increase its maxFitness, only allow the top two species to breed and eliminate the rest
+		takes care of removing poorly preforming organisms in each species
+
+		if all population doesn't increase its maxFitness in 20 gens, only allow the top two species to breed and eliminate the rest
 		*/
 
-		/*
-		THIS FUNCTIONS JOB (SPECIES JOB)
-		---------------------------------
-		first delete prooly preforming organisms (depends of survival threshhold) from this organisms array and main organism array
+		// loop for expectedOffspring amount of times
+		for (let i = 0; i < this.expectedOffspring; i++) {
+			// pick mom and dad here, make sure to not pick mom twice
+			mom = this.chooseParent();
+			if(Math.random < this.population.NEAT.interspeciesMatingRate) {
+				interspeciesFlag = true;
+				let species = undefined;
+				// pick biasely towards better behaving species, then choose parent from picked species
+				for (let i = 0; i < this.population.species.length; i++) {
+					species = this.population.species[i];
+					if(species === this) continue;
+					else if(Math.random() < 0.3) {
+						continue;
+					} else {
+						break;
+					}
+				}
+				dad = species.chooseParent();
+			} else {
+				dad = this.chooseParent(mom);
+			}
 
-		loop for expectedOffspring amount of times
+			//clone champ then be done
+			if (!champDone) {
+				newGenome = this.champ.genome.clone();
+				baby = new Organism(newGenome, 0, this.age);
+				baby.champion = true;
+				champDone = true;
+				
+			} else if (Math.random() < this.population.NEAT.mutateOnlyProb) {
+				newGenome = mom.genome.clone().mutate();
+				baby = new Organism(newGenome, 0, this.age);
 
-			then do superchamp checks and clone champ
+			} else if(Math.random() < this.population.NEAT.mateOnlyProb) {
+				newGenome = Genome.crossover(mom.genome, dad.genome, mom.fitness, dad.fitness, interspeciesFlag, this.population);
+				baby = new Organism(newGenome, 0, this.age);
 
-			decide weather to only mutate, otherwise just mate then decide if to mutate
+			} else {
+				newGenome = Genome.crossover(mom.genome, dad.genome, mom.fitness, dad.fitness, interspeciesFlag, this.population).mutate();
+				baby = new Organism(newGenome, 0, this.age);
+			}
+			// then speciate the new baby (into reproductive pools)
+			let found = false;
+			for (let i = 0; i < this.population.species.length; i++) {
+				let species = this.population.species[i];
+				if (species.checkCompatibility(baby)) {
+					found = true;
+					species.addOrganism(baby);
+					baby.species = species;
+					break;
+				}
+			}
 
-				if only mutate, mutate then be done
-
-				if mate, pick each parent, biasing towards better preforming organisms
-
-			then speciate the new baby (into reproductive pools)
-		*/
+			if (!found) {
+				let newSpecies = new Species(this.population);
+				newSpecies.addOrganism(baby);
+				baby.species = newSpecies;
+				this.population.species.push(newSpecies);
+			}
+		}
 
 		/*
 		POPULATIONS JOB
@@ -136,6 +194,53 @@ class Species {
 
 		population also takes care of poorly performing species (delets them if not improved over specified num of generations or if there pop is 0)
 		*/
+	}
+
+	// removes all the poorly preforming organisms from this species and the main population array 
+	eliminateLowFitOrgs() {
+		let cutOff = Math.round(this.population.NEAT.survivalThreshold * this.organisms.length);
+		let done = false;
+		while (!done) {
+			let organism = this.organisms[cutOff];
+			// make sure at least one organism survives
+			if (organism === undefined || this.organisms.length === 1) {
+				done = true;
+				continue;
+			}
+			this.organisms.splice(cutOff, 1);
+			let removeIndex = this.population.organisms.indexOf(organism);
+			this.population.organisms.splice(removeIndex, 1);
+		}
+	}
+
+	// chooses a parent, biasing better preforming organisms, ignores a provided organism
+	chooseParent(organism) {
+		let sum = 0;
+		let index = 0;
+		let removedOrg = organism;
+		let removedIndex = undefined;
+		let parent = undefined;
+
+		if(removedOrg) {
+			removedIndex = this.organisms.indexOf(removedOrg);
+			this.organisms.splice(removedIndex, 1);
+		}
+
+		for (let i = 0; i < this.organisms.length; i++) {
+			sum += this.organisms[i].fitness;
+		}
+		let rdmChoice = Math.random() * sum;
+
+		while (rdmChoice > 0) {
+			rdmChoice -= this.organisms[index].fitness;
+			index++;
+		}
+		index--;
+		parent = this.organisms[index];
+		if(removedOrg) {
+			this.organisms.splice(removedIndex, 0, removedOrg);
+		}
+		return parent;
 	}
 
 	// sorts the organisms from greatest to least fit
