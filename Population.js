@@ -29,7 +29,7 @@ class Population {
 
 	}
 
-	// speciates an organism to a species it matches with (dont this this will exist)
+	// speciates an organism to a species it matches with (dont know if this will exist)
 	speciateOrg(organism) {
 
 	}
