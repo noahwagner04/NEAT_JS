@@ -129,7 +129,8 @@ class Species {
 		for (let i = 0; i < this.expectedOffspring; i++) {
 			// pick mom and dad here, make sure to not pick mom twice
 			mom = this.chooseParent();
-			if(Math.random < this.population.NEAT.interspeciesMatingRate) {
+			// chooses whether to pick dad from other species
+			if(Math.random() < this.population.NEAT.interspeciesMatingRate) {
 				interspeciesFlag = true;
 				let species = undefined;
 				// pick biasely towards better behaving species, then choose parent from picked species
@@ -153,7 +154,7 @@ class Species {
 				baby = new Organism(newGenome, 0, this.age);
 				baby.champion = true;
 				champDone = true;
-				
+
 			} else if (Math.random() < this.population.NEAT.mutateOnlyProb) {
 				newGenome = mom.genome.clone().mutate();
 				baby = new Organism(newGenome, 0, this.age);
