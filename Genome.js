@@ -476,7 +476,7 @@ class Genome {
 			let randomizeProb = 0;
 
 			// bias the tail end of the genome to stronger mutations
-			if(this.connectionG.length >= 10 && 1 > newGeneDropOff) {
+			if(this.connectionG.length >= 10 && i > newGeneDropOff) {
 				perturbProb = 0.3;
 				randomizeProb = 0.1;
 			} else {
