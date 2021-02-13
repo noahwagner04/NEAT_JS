@@ -12,7 +12,7 @@ class Population {
 		this.size = size;
 		this.species = [];
 		this.innovations = [];
-		this.currInnov = 0;
+		this.currInnov = NEAT.inputs * NEAT.outputs;
 		this.currNodeId = 0;
 		this.champ = undefined;
 		this.gen = 0;
@@ -26,7 +26,9 @@ class Population {
 
 	// initializes the population from one genome, speciates them
 	initPop() {
-
+		for (let i = 0; i < this.size; i++) {
+			
+		}
 	}
 
 	// speciates an organism to a species it matches with (dont know if this will exist)

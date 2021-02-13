@@ -467,27 +467,24 @@ class Genome {
 	This is done to all connections. randomize weight 
 	mutations are bias towards newer connections.
 	*/
-	mutateWeights(rate, scale) {
+	mutateWeights(rate, bias, scale) {
 		let newGeneDropOff = this.connectionG.length * 0.8;
 		for (let i = 0; i < this.connectionG.length; i++) {
 			let connection = this.connectionG[i].connection;
 			let mutateNum = (Math.random() * 2 - 1) * scale;
 			let perturbProb = 0;
-			let randomizeProb = 0;
 
 			// bias the tail end of the genome to stronger mutations
-			if(this.connectionG.length >= 10 && i > newGeneDropOff) {
-				perturbProb = 0.3;
-				randomizeProb = 0.1;
+			if(this.connectionG.length >= 10 && i >= newGeneDropOff) {
+				perturbProb = bias;
 			} else {
-				perturbProb = 1 - rate;
-				randomizeProb = 1 - rate - 0.1;
+				perturbProb = rate;
 			}
 
 			let rdm = Math.random();
-			if(rdm > perturbProb) {
+			if(rdm < perturbProb) {
 				connection.weight += mutateNum;
-			} else if(rdm > randomizeProb) {
+			} else {
 				connection.weight = mutateNum;
 			}
 		}
@@ -507,7 +504,7 @@ class Genome {
 			this.mutateAddConnection(20);
 		} else {
 			if (Math.random() < this.population.NEAT.mutateWeightsProb) {
-				this.mutateWeights(0.9, this.population.NEAT.mutationPower);
+				this.mutateWeights(0.9, 0.7, this.population.NEAT.mutationPower);
 			}
 			if(Math.random() < this.population.NEAT.renableProb) {
 				this.mutateRenable();
