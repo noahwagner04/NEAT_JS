@@ -194,6 +194,8 @@ class Species {
 		then it also takes care of updating the main organism array by stringing the new species arrays together.
 
 		population also takes care of poorly performing species (delets them if not improved over specified num of generations or if there pop is 0)
+
+		pop then forgets all innovs if specified by NEAT setting
 		*/
 	}
 

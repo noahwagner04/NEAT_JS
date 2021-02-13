@@ -7,20 +7,20 @@ interface
 */
 class Population {
 	constructor(NEAT) {
-		this.NEAT = NEAT;
-		this.organisms = [];
-		this.size = this.NEAT.popSize;
-		this.species = [];
-		this.innovations = [];
-		this.currInnov = this.NEAT.inputs * this.NEAT.outputs;
-		this.currNodeId = 0;
-		this.champ = undefined;
+		this.NEAT = NEAT; 			   // holds all configuration settings specified by user
+		this.organisms = []; 		   // a list of all the current genomes
+		this.size = this.NEAT.popSize; // the size of the population
+		this.species = []; 			   // current species of the population
+		this.innovations = []; 		   // a list of all the innovations that took place this gen, or ever
+		this.currInnov = this.NEAT.inputs * this.NEAT.outputs; // the current innov num of the population
+		this.currNodeId = 0; 		   // the current id to set every new unique node to
+		this.champ = undefined; 	   // the best preforming organism within this generation
 		this.gen = 1;
 
-		this.highestFit = 0;
-		this.aveFit = 0;
+		this.highestFit = 0; 	 // the current highest fitness ever occured
+		this.aveFit = 0; 		 // the current average fit 
 
-		this.winner = undefined;
+		this.winner = undefined; // the best preforming organism throughout time
 	}
 
 	// initializes the population from one genome, speciates them
