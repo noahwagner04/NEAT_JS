@@ -13,7 +13,6 @@ class Species {
 		this.maxFitnessEver = 0;
 		this.expectedOffspring = 0;
 		this.organisms = [];
-		this.reproductivePool = [];
 		this.lastImprovedAtAge = 0;
 		this.champ = undefined;
 
@@ -22,7 +21,7 @@ class Species {
 
 	// adds an organism to this species (probably adds to the reproductivePool idk yet)
 	addOrganism(organism) {
-		this.reproductivePool.push(organism);
+		this.organisms.push(organism);
 		return this;
 	}
 
@@ -48,16 +47,25 @@ class Species {
 		return this;
 	}
 
-	// returns the largest fitness in this species
-	getMaxFit() {
+	// gets the largest fit from this gen, getsMaxFitEver, checks for last age improved
+	checkHighFit() {
+		let highestFitIncreased = false;
+		let max = 0;
 		this.organisms.forEach(organism => {
-			if(organism.fitness > this.maxFitness) {
-				this.maxFitness = organism.fitness;
-				if(organism.fitness > this.maxFitnessEver) {
-					this.maxFitnessEver = organism.fitness;
-				}
+			if (organism.fitness > max) {
+				max = organism.fitness;
 			}
 		});
+		this.maxFitness = max;
+		if (this.maxFitness > this.maxFitnessEver) {
+			highestFitIncreased = true;
+			this.maxFitnessEver = this.maxFitness;
+		}
+		if (!highestFitIncreased) {
+			this.lastImprovedAtAge++;
+		} else {
+			this.lastImprovedAtAge = 0;
+		}
 		return this;
 	}
 
@@ -74,7 +82,6 @@ class Species {
 			let species = this.population.species[i];
 			totalAvgFit += species.aveFitness;
 		}
-
 		offspringNum = this.aveFitness / totalAvgFit * this.population.size;
 		this.expectedOffspring = offspringNum < 0 ? 0 : Math.trunc(offspringNum);
 		return this;
@@ -109,20 +116,20 @@ class Species {
 		POPULATIONS JOB
 		----------------
 
-		organizes species array from best preforming to worst
+		organizes species array from best preforming to worst ---DONE---
 
-		counts offspring for all species, calculates maxFit, averageFit, also takes care of ranking / setting champ of each species
+		counts offspring for all species, calculates maxFit, averageFit, also takes care of ranking / setting champ of each species ---DONE---
 		
-		adds one the the age of every species 
+		adds one the the age of every species ---DONE---
 
 		population first takes care of the fractional parts of expectedOffspring and disributes it
 		to well preforming species (just subtracts total pop size with the sum of all species expectedOffsprings (thats the remainder),
 		if its > 0 that means we have to add (popsize - sumOfExpecedOffsprings) babies to well performing species,
-		else if <= 0 then do nothing)
+		else if <= 0 then do nothing) --DONE--
 
-		takes care of removing poorly preforming organisms in each species
+		takes care of removing poorly preforming organisms in each species --DONE--
 
-		if all population doesn't increase its maxFitness in 20 gens, only allow the top two species to breed and eliminate the rest
+		(after) if all population doesn't increase its maxFitness in 20 gens, only allow the top two species to breed and eliminate the rest ---DONE---
 		*/
 
 		// loop for expectedOffspring amount of times
@@ -147,9 +154,9 @@ class Species {
 			} else {
 				dad = this.chooseParent(mom);
 			}
-
-			//clone champ then be done
-			if (!champDone) {
+			
+			//clone champ then be done (also runs if the original length of this species is 1 by checking if a dad exists)
+			if ((!champDone && this.organisms.length > 5) || dad === undefined) {
 				newGenome = this.champ.genome.clone();
 				baby = new Organism(newGenome, 0, this.age);
 				baby.champion = true;
@@ -167,6 +174,7 @@ class Species {
 				newGenome = Genome.crossover(mom.genome, dad.genome, mom.fitness, dad.fitness, interspeciesFlag, this.population).mutate();
 				baby = new Organism(newGenome, 0, this.age);
 			}
+
 			// then speciate the new baby (into reproductive pools)
 			let found = false;
 			for (let i = 0; i < this.population.species.length; i++) {
@@ -190,12 +198,12 @@ class Species {
 		/*
 		POPULATIONS JOB
 		---------------
-		population then takes care of making all species organisms array update to the next gen (by making it equal to their reproducive pools)
-		then it also takes care of updating the main organism array by stringing the new species arrays together.
+		(after) population then takes care of making all species organisms array update to the next gen (by making it equal to their reproducive pools)
+		then it also takes care of updating the main organism array by stringing the new species arrays together. ---DONE---
 
-		population also takes care of poorly performing species (delets them if not improved over specified num of generations or if there pop is 0)
+		(before) population also takes care of poorly performing species (delets them if not improved over specified num of generations or if there pop is 0) ---DONE---
 
-		pop then forgets all innovs if specified by NEAT setting
+		(after) pop then forgets all innovs if specified by NEAT setting
 		*/
 	}
 
@@ -214,6 +222,7 @@ class Species {
 			let removeIndex = this.population.organisms.indexOf(organism);
 			this.population.organisms.splice(removeIndex, 1);
 		}
+		return this;
 	}
 
 	// chooses a parent, biasing better preforming organisms, ignores a provided organism
