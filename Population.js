@@ -85,7 +85,6 @@ class Population {
 		this.species.forEach(species => {
 			species.getChamp().countOffspring();
 		});
-		console.log(this.species[0].aveFitness);
 		
 		// eliminate low preforming organisms so they can't reproduce
 		this.species.forEach(species => species.eliminateLowFitOrgs());
