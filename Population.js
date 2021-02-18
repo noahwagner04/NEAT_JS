@@ -12,8 +12,8 @@ class Population {
 		this.size = this.NEAT.popSize; // the size of the population
 		this.species = []; 			   // current species of the population
 		this.innovations = []; 		   // a list of all the innovations that took place this gen, or ever
-		this.currInnov = this.NEAT.inputs * this.NEAT.outputs; // the current innov num of the population
-		this.currNodeId = 0; 		   // the current id to set every new unique node to
+		this.currInnov = this.NEAT.inputs * this.NEAT.outputs;  // the current innov num of the population
+		this.currNodeId = this.NEAT.inputs + this.NEAT.outputs; // the current id to set every new unique node to
 		this.champ = undefined; 	   // the best preforming organism within this generation
 		this.gen = 1;
 
@@ -85,7 +85,7 @@ class Population {
 		this.species.forEach(species => {
 			species.getChamp().countOffspring();
 		});
-		
+
 		// eliminate low preforming organisms so they can't reproduce
 		this.species.forEach(species => species.eliminateLowFitOrgs());
 		if (this.species.length !== 1) {
