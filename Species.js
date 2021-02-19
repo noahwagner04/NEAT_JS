@@ -82,6 +82,7 @@ class Species {
 			let species = this.population.species[i];
 			totalAvgFit += species.aveFitness;
 		}
+		console.log(totalAvgFit);
 		offspringNum = this.aveFitness / totalAvgFit * this.population.size;
 		this.expectedOffspring = offspringNum < 0 ? 0 : Math.trunc(offspringNum);
 		return this;
@@ -154,7 +155,7 @@ class Species {
 			} else {
 				dad = this.chooseParent(mom);
 			}
-			
+
 			//clone champ then be done (also runs if the original length of this species is 1 by checking if a dad exists)
 			if ((!champDone && this.organisms.length > 5) || dad === undefined) {
 				newGenome = this.champ.genome.clone();

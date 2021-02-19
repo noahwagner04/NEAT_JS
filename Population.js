@@ -144,6 +144,8 @@ class Population {
 			this.innovations = [];
 		}
 
+		this.gen++;
+
 		return this;
 	}
 
