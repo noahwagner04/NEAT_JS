@@ -82,7 +82,6 @@ class Species {
 			let species = this.population.species[i];
 			totalAvgFit += species.aveFitness;
 		}
-		console.log(totalAvgFit);
 		offspringNum = this.aveFitness / totalAvgFit * this.population.size;
 		this.expectedOffspring = offspringNum < 0 ? 0 : Math.trunc(offspringNum);
 		return this;
@@ -160,7 +159,7 @@ class Species {
 			if ((!champDone && this.organisms.length > 5) || dad === undefined) {
 				newGenome = this.champ.genome.clone();
 				baby = new Organism(newGenome, 0, this.age);
-				baby.champion = true;
+				if(!champDone) baby.champion = true;
 				champDone = true;
 
 			} else if (Math.random() < this.population.NEAT.mutateOnlyProb) {

@@ -124,6 +124,7 @@ class Population {
 			}
 		}
 
+		// NOTE: this could be the cause of like all the bugs
 		for (let i = this.organisms.length - 1; i >= 0; i--) {
 			let organism = this.organisms[i];
 			for (let j = newOrganisms.length - 1; j >= 0; j--) {
@@ -138,10 +139,23 @@ class Population {
 			}
 		}
 
+		for (let i = this.species.length - 1; i >= 0; i--) {
+			let species = this.species[i];
+			if(species.organisms.length === 0) {
+				this.species.splice(i, 1);
+			}
+		}
+
 		this.organisms = newOrganisms;
 
 		if(this.NEAT.forgetInnovs) {
 			this.innovations = [];
+		}
+
+		if(this.species.length > 4) {
+			this.NEAT.compatibilityThresh += this.NEAT.compatibilityModifier;
+		} else if(this.species.length === 1) {
+			this.NEAT.compatibilityThresh -= this.NEAT.compatibilityModifier;
 		}
 
 		this.gen++;
@@ -159,7 +173,7 @@ class Population {
 
 	// orders species array from best preforming to least preforming
 	rankSpecies() {
-		this.species.sort((a, b) => b.aveFitness - a.aveFitness);
+		this.species.sort((a, b) => b.maxFitness - a.maxFitness);
 		return this;
 	}
 
@@ -183,6 +197,7 @@ class Population {
 			return this;
 		} else if(this.champ.fitness > this.winner.fitness) {
 			this.winner = this.champ;
+			this.winner.winner = true;
 		}
 		return this;
 	}

@@ -14,5 +14,6 @@ class Organism {
 		this.species = undefined; 		// the species this organism belongs to
 		this.generation = gen; 			// the generation this organsim is apart of
 		this.champion = false; 			// if this organism preforms best in its species
+		this.fitnessCounter = 0;
 	}
 }
